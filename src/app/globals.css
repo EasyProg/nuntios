@@ -1,11 +1,16 @@
 @import "tailwindcss";
+@import "@radix-ui/themes/styles.css";
+
+/* @theme {
+  --3xl: box-shadow: 0 35px 60px 15px rgba(1, 170, 174, 0.5);
+} */
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
