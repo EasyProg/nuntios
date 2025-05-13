@@ -1,36 +1,35 @@
 "use client";
 
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { Flex, IconButton, TextArea } from "@radix-ui/themes";
 import { useState } from "react";
 
 type MessageInputProps = {
   placeholder?: string;
   chatId: string;
+  handleSendMessage: (message: string) => void;
 };
 
 export const MessageInput: React.FC<MessageInputProps> = ({
   placeholder,
-  chatId,
+  handleSendMessage,
 }) => {
   const [message, setMessage] = useState<string>("");
 
-  const handleSubmit = (value: string) => {
-    console.log("Send message");
-    if (!value.trim) return;
-    setMessage("");
-    // await sendMesssage(chatId, message)
-  };
-
   return (
-    <Flex gap="3">
+    <Flex justify="between" gap="2" className="p-2 h-30">
       <TextArea
         placeholder={placeholder}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        className="w-auto min-w-170 h-auto border-indigo-500 !text-gray-500 !bg-gray-600/30"
       />
-      <IconButton size="3" variant="soft" onClick={() => handleSubmit}>
-        <MagnifyingGlassIcon width="22" height="22" />
+      <IconButton
+        size="3"
+        variant="soft"
+        onClick={() => handleSendMessage(message)}
+      >
+        <ArrowRightIcon width="22" height="22" />
       </IconButton>
     </Flex>
   );

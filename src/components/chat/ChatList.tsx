@@ -11,8 +11,10 @@ export const ChatList: React.FC<ChatList> = ({ chats }) => {
     <div>
       {chats.map((item) => (
         <ChatItem
+          chatId={item.chatId}
+          key={item.chatId}
           name={item.name}
-          lastMessageAt={item.lastMessageAt.toISOString()}
+          lastMessageAt={item.lastMessageAt.toLocaleDateString()}
         />
       ))}
     </div>

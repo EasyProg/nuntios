@@ -1,7 +1,6 @@
+import { GlobeIcon } from "@radix-ui/react-icons";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-// import globeIcon from "../../public/globe.svg";
-import { GlobeIcon } from "@radix-ui/react-icons";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
 

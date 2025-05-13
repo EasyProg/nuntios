@@ -1,10 +1,11 @@
-import { cookies } from "next/headers";
+import { setAuthCookie } from "@/helpers/auth";
+import { generateToken } from "@/helpers/auth-client";
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import prisma from "../../actions/prisma";
 
 export async function POST(request: Request) {
   try {
-    const coookieStore = await cookies();
     const body = await request.json();
     const { email, password } = body;
 
@@ -19,15 +20,22 @@ export async function POST(request: Request) {
     });
 
     if (currentUser) {
-      coookieStore.set("user", email, {
-        path: "/",
-        maxAge: 60 * 60,
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() * 1000 * 10),
+      const isValid = await bcrypt.compare(password, currentUser.password);
+      console.log({ isValid });
+      if (!isValid) {
+        console.log(bcrypt.compare(password, currentUser.password));
+        return new NextResponse("Wrong credentials", { status: 401 });
+      }
+      const token = generateToken({
+        id: currentUser.id.toString(),
+        name: currentUser.name || "",
+        email: currentUser.email,
       });
-      return NextResponse.json(currentUser);
-    }
+
+      setAuthCookie(token);
+
+      return NextResponse.json(token);
+    } else return new NextResponse("No such user", { status: 403 });
   } catch (error: any) {
     return new NextResponse("Internal Error", { status: 500 });
   }

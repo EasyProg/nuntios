@@ -4,7 +4,7 @@ import { Flex, Text } from "@radix-ui/themes";
 
 type MessageItemProps = {
   content: string;
-  sentAt: string;
+  sentAt?: string;
   sender?: string;
 };
 

@@ -1,18 +1,25 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { verifyToken } from "./helpers/auth-client";
 
-export function middleware(request: NextRequest) {
-  const user = request.cookies.get("user");
-  console.log(user);
+export async function middleware(request: NextRequest) {
+  const token = request.cookies.get("auth-token")?.value;
 
-  if (!user) {
+  // const token = await getAuthToken();
+  const isValid = verifyToken(token || "");
+
+  if (!isValid) {
     return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/chat", request.url));
   }
   // NextResponse.error;
   return NextResponse.next();
 }
 
-// Конфигурация для каких маршрутов применять middleware
+// Config for routes
 export const config = {
   matcher: ["/chat", "/"],
 };

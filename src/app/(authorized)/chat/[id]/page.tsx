@@ -1,13 +1,20 @@
-// import Sidebar from "@/components/layout/Sidebar";
+import getMessages from "@/app/actions/getMessages";
+import { ChatRoom } from "@/components/messages/ChatRoom";
 
-import { MessageInput } from "@/components/messages/MessageInput";
-import { MessageList } from "@/components/messages/MessageList";
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const messages = await getMessages(id);
 
-export default async function ChatPage() {
   return (
-    <div className="flex items-center justify-center justify-items-center p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <MessageList />
-      <MessageInput />
+    <div
+      key={id}
+      className="font-[family-name:var(--font-geist-sans)] bg-zinc-900 rounded-sm w-180"
+    >
+      <ChatRoom messages={messages} chatId={id} />
     </div>
   );
 }

@@ -13,7 +13,7 @@ export const Sidebar: React.FC<Sidebar> = ({ chats, users }) => {
   return (
     <div className="w-3xs p-3 h-screen text-xs">
       <Header users={users} />
-      <div className="flex justify-center items-center h-full">
+      <div className="flex items-start h-full w-full mt-2">
         {!chats.length ? (
           "No active chats please create some ..."
         ) : (

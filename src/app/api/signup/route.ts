@@ -1,16 +1,19 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { validatePassword } from "@/helpers/helpers";
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import prisma from "../../actions/prisma";
 
 export async function POST(request: Request) {
   try {
-    const coookieStore = await cookies();
+    // const coookieStore = await cookies();
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, name } = body;
 
-    if (!email || !password) {
-      return new NextResponse("Missing info", { status: 400 });
+    if (!validatePassword) {
+      return new NextResponse("Invalid password", { status: 403 });
     }
+
+    const passwordDecoded = bcrypt.hashSync(password, 8);
 
     const checkUser = await prisma.user.findUnique({ where: { email } });
 
@@ -18,26 +21,15 @@ export async function POST(request: Request) {
       return new NextResponse("User already exists", { status: 409 });
     }
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email,
-        // password
+        name,
+        password: passwordDecoded,
       },
     });
-
-    if (user) {
-      coookieStore.set("user", email, {
-        path: "/",
-        maxAge: 60 * 60,
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() * 1000 * 10),
-      });
-      return NextResponse.json(user);
-    }
-
-    redirect("/chat");
   } catch (error: any) {
+    console.log({ error });
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

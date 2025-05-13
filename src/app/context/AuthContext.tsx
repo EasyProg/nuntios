@@ -8,23 +8,26 @@ import {
   useState,
 } from "react";
 
+type User = {
+  id: string;
+  name?: string;
+  email: string;
+} | null;
+
 type AuthContextType = {
-  signIn: (user: string) => void;
+  signIn: (user: User | null) => void;
   signOut: () => void;
-  loading: boolean;
-  user: string | null;
+  user: User;
 };
 
 const AuthContext = createContext<AuthContextType>({
   signIn: () => false,
   signOut: () => false,
-  loading: false,
   user: null,
 });
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   const signIn = () => {
     setUser(user);
@@ -35,7 +38,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

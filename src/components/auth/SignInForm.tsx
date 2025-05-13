@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuth } from "@/app/context/AuthContext";
+import { verifyToken } from "@/helpers/auth-client";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,10 +11,13 @@ import { buttonClass, inputClass } from "../ui/consts";
 
 const SignInForm: React.FC = () => {
   const router = useRouter();
+  const { signIn } = useAuth();
 
   const handleSignin = async (e: React.FormEvent) => {
+    // Prevent default From submit
     e.preventDefault();
     e.stopPropagation();
+
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
     const logged = await axios
@@ -21,15 +26,25 @@ const SignInForm: React.FC = () => {
         password: data.password,
       })
       .catch((error) => {
+        if (error.status === 404) {
+          toast.info(`No user found please register new one`, {
+            position: "top-right",
+          });
+          return;
+        }
         toast.error(`${error.status}-${error.message}`, {
           position: "top-right",
         });
       });
 
-    if (logged) {
+    if (logged?.data) {
       toast.success("Success", {
         position: "top-right",
       });
+
+      console.log({ logged });
+      const user = verifyToken(logged.data);
+      signIn(user);
       router.push("/chat");
     }
   };

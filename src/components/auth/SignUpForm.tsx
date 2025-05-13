@@ -38,7 +38,7 @@ const SignUpForm: React.FC = () => {
       toast.success("User created", {
         position: "top-right",
       });
-      router.push("/chat");
+      router.push("/signin");
     }
   };
 
@@ -85,7 +85,7 @@ const SignUpForm: React.FC = () => {
           </Form.Message>
         </div>
         <Form.Control asChild>
-          <input className={inputClass} type="text" required />
+          <input className={inputClass} type="text" required id="userName" />
         </Form.Control>
       </Form.Field>
       <Form.Field className="mb-2.5 grid" name="password">

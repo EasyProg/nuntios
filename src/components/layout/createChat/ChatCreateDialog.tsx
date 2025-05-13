@@ -1,12 +1,13 @@
 "use client";
 
 // import { createChat } from "@/app/actions/createChat";
-import { useMapUsers } from "@/components/hooks";
+import { useMapUsers } from "@/components/hooks/useMapUsers";
 import { UsersProps } from "@/components/types";
 import { buttonClass } from "@/components/ui/consts";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { useState } from "react";
 import Select, { MultiValue } from "react-select";
@@ -19,9 +20,11 @@ interface Option {
 
 export const ChatCreateDialog: React.FC<UsersProps> = ({ users }) => {
   const [nameValue, setNameValue] = useState("");
+  const [open, setOpen] = useState(false);
   const modifiedUsers = useMapUsers(users);
   const [usersValue, setUsersValue] =
     useState<MultiValue<Option>>(modifiedUsers);
+  const router = useRouter();
 
   const handleChatCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,18 +33,17 @@ export const ChatCreateDialog: React.FC<UsersProps> = ({ users }) => {
       toast.warning("Please input information!");
       return;
     }
-    const newChat = await axios
+    await axios
       .post("/api/chat", {
         name: nameValue,
-        users: usersValue,
+        users: usersValue.map((item) => ({ id: item.value })),
+      })
+      .then(() => {
+        toast.info(`Chat ${nameValue} created`);
+        setOpen(false);
+        router.refresh();
       })
       .catch((error) => {
-        // if (error.status == 409) {
-        //   toast.error(`User already exists`, {
-        //     position: "top-right",
-        //   });
-        //   return;
-        // }
         toast.error(`${error.status}-${error.message}`, {
           position: "top-right",
         });
@@ -49,13 +51,14 @@ export const ChatCreateDialog: React.FC<UsersProps> = ({ users }) => {
   };
 
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <PlusIcon
           color="#606060"
           className="hover:cursor-pointer hover:color-zinc-400"
           width={24}
           height={24}
+          onClick={() => setOpen(true)}
         />
       </Dialog.Trigger>
       <Dialog.Portal>
