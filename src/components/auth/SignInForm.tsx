@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { toast } from "react-toastify";
 import { buttonClass, inputClass } from "../ui/consts";
+import { UserDataType } from "../types";
 
 const SignInForm: React.FC = () => {
   const router = useRouter();
@@ -26,8 +27,14 @@ const SignInForm: React.FC = () => {
         password: data.password,
       })
       .catch((error) => {
-        if (error.status === 404) {
+        if (error.status === 403) {
           toast.info(`No user found please register new one`, {
+            position: "top-right",
+          });
+          return;
+        }
+        if (error.status === 401) {
+          toast.info(`Your password is incorrect, please try again`, {
             position: "top-right",
           });
           return;
@@ -42,8 +49,7 @@ const SignInForm: React.FC = () => {
         position: "top-right",
       });
 
-      console.log({ logged });
-      const user = verifyToken(logged.data);
+      const user = (await verifyToken(logged.data)) as UserDataType;
       signIn(user);
       router.push("/chat");
     }

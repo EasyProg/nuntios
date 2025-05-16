@@ -21,22 +21,20 @@ export async function POST(request: Request) {
 
     if (currentUser) {
       const isValid = await bcrypt.compare(password, currentUser.password);
-      console.log({ isValid });
       if (!isValid) {
-        console.log(bcrypt.compare(password, currentUser.password));
         return new NextResponse("Wrong credentials", { status: 401 });
       }
-      const token = generateToken({
+      const token = await generateToken({
         id: currentUser.id.toString(),
         name: currentUser.name || "",
         email: currentUser.email,
       });
 
-      setAuthCookie(token);
-
+      await setAuthCookie(token);
       return NextResponse.json(token);
     } else return new NextResponse("No such user", { status: 403 });
   } catch (error: any) {
+    console.log({ error });
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

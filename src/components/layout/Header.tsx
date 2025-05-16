@@ -2,6 +2,7 @@
 import { useAuth } from "@/app/context/AuthContext";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { DropdownMenu } from "radix-ui";
 import { toast } from "react-toastify";
 import { UsersProps } from "../types";
@@ -9,7 +10,9 @@ import { ChatCreateDialog } from "./createChat/ChatCreateDialog";
 
 export const Header: React.FC<UsersProps> = ({ users }) => {
   const { user } = useAuth();
-  const handleSignOut = async () => {
+  const router = useRouter();
+  const handleSignOut = async (e: React.FormEvent) => {
+    e.preventDefault();
     await axios
       .post("/api/signout")
       .then(() => {
@@ -21,6 +24,9 @@ export const Header: React.FC<UsersProps> = ({ users }) => {
         toast.error(`${error.status}-${error.message}`, {
           position: "top-right",
         });
+      })
+      .finally(() => {
+        router.push("/signin");
       });
   };
 

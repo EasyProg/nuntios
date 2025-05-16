@@ -9,9 +9,9 @@ import {
 } from "react";
 
 type User = {
-  id: string;
+  id?: string;
   name?: string;
-  email: string;
+  email?: string;
 } | null;
 
 type AuthContextType = {

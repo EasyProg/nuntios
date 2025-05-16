@@ -1,11 +1,10 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { getAuthToken } from "./helpers/auth";
 import { verifyToken } from "./helpers/auth-client";
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get("auth-token")?.value;
-
-  // const token = await getAuthToken();
+  const token = await getAuthToken();
   const isValid = verifyToken(token || "");
 
   if (!isValid) {

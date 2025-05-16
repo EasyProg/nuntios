@@ -1,3 +1,5 @@
+import { UserDataType } from "@/components/types";
+import { getCurrentUser } from "@/helpers/auth";
 import { User } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
@@ -6,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
   try {
-    const email = request.cookies.get("user")?.value;
+    const userData: UserDataType = await getCurrentUser();
     const body = await request.json();
     const { name, users } = body;
 
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
     const currentUser = await prisma.user.findUnique({
       where: {
-        email,
+        email: userData?.email,
       },
     });
 

@@ -11,7 +11,6 @@ export default async function ChatsLayout({
 }>) {
   const chats = await getChats();
   const users = await getUsers();
-  console.log({ users });
   return (
     <div className="flex items-start w-100">
       <Sidebar chats={chats ?? []} users={users} />
