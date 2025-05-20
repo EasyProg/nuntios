@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -9,7 +8,5 @@ export async function POST(request: Request) {
     return new NextResponse("Logged out", { status: 200 });
   } catch (error: any) {
     return new NextResponse("Internal Error", { status: 500 });
-  } finally {
-    redirect("signin");
   }
 }

@@ -9,4 +9,13 @@ const buttonClass =
 
 const chatItemClass =
   "flex-col p-2 rounded-xs justify-between bg-cyan-950/40  hover:bg-cyan-900/50 text-gray-400 w-auto min-h-15 min-w-60";
-export { inputClass, buttonClass, centerLayout, chatItemClass };
+
+const chatItemClassActive =
+  "flex-col p-2 rounded-xs justify-between bg-cyan-700/40 hover: bg-cyan-650/40 text-gray-400 w-auto min-h-15 min-w-60";
+export {
+  inputClass,
+  buttonClass,
+  centerLayout,
+  chatItemClass,
+  chatItemClassActive,
+};

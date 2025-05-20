@@ -12,7 +12,7 @@ export default async function ChatsLayout({
   const chats = await getChats();
   const users = await getUsers();
   return (
-    <div className="flex items-start w-100">
+    <div className="flex items-start">
       <Sidebar chats={chats ?? []} users={users} />
       {children}
     </div>

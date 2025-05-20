@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/context/AuthContext";
 import { Message } from "@prisma/client";
 import { useEffect, useState } from "react";
 import useSocket from "../hooks/useSocket";
@@ -15,6 +16,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
   const [chatMessages, setChatMessages] =
     useState<Partial<Message>[]>(messages);
   const socket = useSocket();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!socket) return;
@@ -36,7 +38,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
     const newMessage = {
       // id: Date.now(),
       name: value,
-      senderId: "current-user",
+      senderId: user?.name,
       createdAt: new Date().toISOString(),
     };
 

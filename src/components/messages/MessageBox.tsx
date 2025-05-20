@@ -15,12 +15,17 @@ export const MessageBox: React.FC<MessageListProps> = ({ messages }) => {
       gap="2"
       className="bg-stone-800/30 min-w-180 min-h-250"
     >
-      {messages.map((message) => (
-        <MessageItem
-          content={message.name ?? ""}
-          sentAt={message.createdAt?.toLocaleString()}
-        />
-      ))}
+      {messages.map((message) => {
+        // const formattedMessage = message.createdAt;
+        return (
+          <MessageItem
+            content={message.name ?? ""}
+            sentAt={message.createdAt}
+            sender={message.senderId?.toString()}
+            key={`${message.id}${message.createdAt}`}
+          />
+        );
+      })}
     </Flex>
   );
 };

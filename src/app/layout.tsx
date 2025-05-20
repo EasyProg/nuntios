@@ -1,7 +1,9 @@
+import { getCurrentUser } from "@/helpers/auth";
 import { GlobeIcon } from "@radix-ui/react-icons";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "./context/AuthContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,22 +21,25 @@ export const metadata: Metadata = {
   description: "Powered by idea",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getCurrentUser();
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="bg-stone-800 backdrop-blur-2xl h-15 shadow-xl font-mono shadow-cyan-500/50 backdrop-blur-lg flex justify-center text-lg items-center">
-          <p className="text-cyan-500">Nuntios v.0.1</p>
-          <GlobeIcon width={24} height={24} color="#606060" />
-        </div>
-        <div>{children}</div>
-        <ToastContainer />
+        <AuthProvider initialUser={user}>
+          <div className="bg-stone-800 backdrop-blur-2xl h-15 shadow-xl font-mono shadow-cyan-500/50 backdrop-blur-lg flex justify-center text-lg items-center">
+            <p className="text-cyan-500">Nuntios v.0.1</p>
+            <GlobeIcon width={24} height={24} color="#606060" />
+          </div>
+          <div>{children}</div>
+          <ToastContainer />
+        </AuthProvider>
       </body>
     </html>
   );

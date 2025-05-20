@@ -64,7 +64,7 @@ export const Header: React.FC<UsersProps> = ({ users }) => {
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
-      <p>{user?.name}</p>
+      <p className="text-cyan-500">{user?.name}</p>
       <ChatCreateDialog users={users} />
     </div>
   );

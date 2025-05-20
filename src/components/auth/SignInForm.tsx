@@ -1,14 +1,12 @@
 "use client";
 
 import { useAuth } from "@/app/context/AuthContext";
-import { verifyToken } from "@/helpers/auth-client";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
 import { toast } from "react-toastify";
 import { buttonClass, inputClass } from "../ui/consts";
-import { UserDataType } from "../types";
 
 const SignInForm: React.FC = () => {
   const router = useRouter();
@@ -49,8 +47,6 @@ const SignInForm: React.FC = () => {
         position: "top-right",
       });
 
-      const user = (await verifyToken(logged.data)) as UserDataType;
-      signIn(user);
       router.push("/chat");
     }
   };

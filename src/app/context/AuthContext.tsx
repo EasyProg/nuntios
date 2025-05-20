@@ -26,8 +26,11 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
 });
 
-export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const AuthProvider: FC<PropsWithChildren<{ initialUser: User }>> = ({
+  children,
+  initialUser,
+}) => {
+  const [user, setUser] = useState<User>(initialUser);
 
   const signIn = () => {
     setUser(user);
