@@ -12,7 +12,7 @@ export default async function Page({
   return (
     <div
       key={id}
-      className="font-[family-name:var(--font-geist-sans)] bg-zinc-900 rounded-sm w-180 w-full"
+      className="font-[family-name:var(--font-geist-sans)] bg-zinc-900 rounded-sm w-full"
     >
       <ChatRoom messages={messages} chatId={id} />
     </div>

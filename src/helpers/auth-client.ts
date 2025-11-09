@@ -39,7 +39,6 @@ export async function verifyToken(token: string): Promise<UserDataType> {
     return payload;
     // return jwt.verify(token, JWT_SECRET) as UserPayload;
   } catch (error) {
-    console.log({ error });
     return null;
   }
 }

@@ -9,8 +9,11 @@ export const getMessages = async (id: string) => {
 
   try {
     const messages = await prisma.message.findMany({
+      cacheStrategy: {
+        ttl: 60,
+      },
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
       where: {
         chatId: chat?.id,
@@ -19,10 +22,8 @@ export const getMessages = async (id: string) => {
         sendUser: true,
       },
     });
-
     return messages;
   } catch (error: any) {
-    console.log({ error });
     throw error;
   }
 };

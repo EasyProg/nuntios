@@ -28,6 +28,7 @@ export async function POST(request: Request) {
         password: passwordDecoded,
       },
     });
+    return new NextResponse(`User ${name} created!`);
   } catch (error: any) {
     console.log({ error });
     return new NextResponse("Internal Error", { status: 500 });

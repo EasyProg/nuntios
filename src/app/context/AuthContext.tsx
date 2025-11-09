@@ -32,8 +32,8 @@ export const AuthProvider: FC<PropsWithChildren<{ initialUser: User }>> = ({
 }) => {
   const [user, setUser] = useState<User>(initialUser);
 
-  const signIn = () => {
-    setUser(user);
+  const signIn = (nextUser: User) => {
+    setUser(nextUser);
   };
 
   const signOut = () => {

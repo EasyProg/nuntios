@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/app/context/AuthContext";
 import { Message } from "@prisma/client";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import useSocket from "../hooks/useSocket";
 import { MessageBox } from "./MessageBox";
@@ -18,6 +19,22 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
   const socket = useSocket();
   const { user } = useAuth();
 
+  const handleDelete = async (id?: number, date?: Date) => {
+    if (id) {
+      await axios.post(`/api/message/${id}`, {
+        id,
+      });
+      setChatMessages([...chatMessages.filter((item) => item.id !== id)]);
+    } else if (date) {
+      await axios.post(`/api/message/${date}`, {
+        date,
+      });
+      setChatMessages([
+        ...chatMessages.filter((item) => item.createdAt !== date),
+      ]);
+    }
+  };
+
   useEffect(() => {
     if (!socket) return;
 
@@ -30,32 +47,31 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
     });
 
     return () => {
+      socket;
       socket.off("receive-message");
     };
   }, [socket, chatId]);
 
-  const handleSendMessage = (value: string) => {
-    const newMessage = {
-      // id: Date.now(),
-      name: value,
-      senderId: user?.name,
-      createdAt: new Date().toISOString(),
-    };
-
-    // Seinding message with socket
+  const handleSendMessage = async (value: string) => {
+    // Sending message with socket
     socket?.emit("send-message", {
       chatId,
-      message: newMessage,
+      message: {
+        name: value,
+        createdAt: new Date(),
+        sendUserId: user?.id,
+      },
     });
-
-    // Optimistic update
-    setChatMessages((prev) => [...prev, newMessage as any]);
   };
 
   return (
-    <>
-      <MessageBox messages={chatMessages} />
+    <div className="h-[90vh] flex flex-col justify-between">
+      <MessageBox
+        messages={chatMessages}
+        chatId={chatId}
+        handleDelete={handleDelete}
+      />
       <MessageInput handleSendMessage={handleSendMessage} chatId={chatId} />
-    </>
+    </div>
   );
 };

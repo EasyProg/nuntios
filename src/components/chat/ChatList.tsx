@@ -1,10 +1,10 @@
 "use client";
-import { Chat } from "@prisma/client";
 import { useParams } from "next/navigation";
+import { Chats } from "../types";
 import { ChatItem } from "./ChatItem";
 
 type ChatList = {
-  chats: Chat[];
+  chats: Chats;
 };
 
 export const ChatList: React.FC<ChatList> = ({ chats }) => {
@@ -13,10 +13,11 @@ export const ChatList: React.FC<ChatList> = ({ chats }) => {
     <div>
       {chats.map((item) => (
         <ChatItem
+          dbId={item.id}
           chatId={item.chatId}
           key={item.chatId}
           name={item.name}
-          lastMessageAt={item.lastMessageAt.toLocaleDateString()}
+          lastMessageAt={item.lastMessageAt}
           isActive={id === item.chatId}
         />
       ))}

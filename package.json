@@ -2,6 +2,7 @@
   "name": "nuntios",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -18,6 +19,7 @@
     "next": "15.3.1",
     "postcss": "^8.5.3",
     "prisma": "^6.7.0",
+    "radix-ui": "^1.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-select": "^5.10.1",
@@ -38,6 +40,7 @@
     "jose": "^6.0.11",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.5",
+    "tsx": "^4.19.4",
     "typescript": "^5",
     "uuid": "^11.1.0"
   }

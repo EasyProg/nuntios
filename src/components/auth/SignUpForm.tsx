@@ -1,16 +1,23 @@
 "use client";
 
+import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Form } from "radix-ui";
-import React from "react";
+import {
+  Form,
+  unstable_PasswordToggleField as PasswordToggleField,
+} from "radix-ui";
+import React, { ChangeEvent, useState } from "react";
 import { toast } from "react-toastify";
-import { buttonClass, inputClass } from "../ui/consts";
+import { formButton, formInput } from "../ui/consts";
+
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const SignUpForm: React.FC = () => {
   const router = useRouter();
-
+  const [password, setPassword] = useState<String | null>(null);
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -20,7 +27,7 @@ const SignUpForm: React.FC = () => {
       .post("/api/signup", {
         email: data.email,
         name: data.userName,
-        password: data.password,
+        password: password,
       })
       .catch((error) => {
         if (error.status == 409) {
@@ -63,7 +70,7 @@ const SignUpForm: React.FC = () => {
           </Form.Message>
         </div>
         <Form.Control asChild>
-          <input className={inputClass} type="email" required />
+          <input className={formInput} type="email" required />
         </Form.Control>
       </Form.Field>
       <Form.Field className="mb-2.5 grid" name="userName">
@@ -85,7 +92,7 @@ const SignUpForm: React.FC = () => {
           </Form.Message>
         </div>
         <Form.Control asChild>
-          <input className={inputClass} type="text" required id="userName" />
+          <input className={formInput} type="text" required id="userName" />
         </Form.Control>
       </Form.Field>
       <Form.Field className="mb-2.5 grid" name="password">
@@ -93,22 +100,48 @@ const SignUpForm: React.FC = () => {
           <Form.Label className="text-[15px] font-medium leading-[35px] text-white">
             Password
           </Form.Label>
-          <Form.Message
-            className="text-[13px] text-white opacity-80"
-            match="valueMissing"
-          >
-            Enter your password
-          </Form.Message>
-          <Form.Message
-            className="text-[13px] text-white opacity-80"
-            match="typeMismatch"
-          >
-            Please provide a valid password
-          </Form.Message>
         </div>
         <Form.Control asChild>
-          <input className={inputClass} type="password" required />
+          <PasswordToggleField.Root id="password">
+            <div className="flex items-center justify-center">
+              <PasswordToggleField.Input
+                className={
+                  formInput +
+                  "all-[unset] box-border h-[18px] text-[15px] text-inherit leading-[1] selection:bg-blackA6 selection:text-white"
+                }
+                required
+                onChange={(v: ChangeEvent<HTMLInputElement>) => {
+                  setPassword(v.target.value);
+                }}
+              />
+              <PasswordToggleField.Toggle className="relative left-[-25] all-[unset] box-border h-[18px] text-[15px] text-inherit leading-[1] flex items-center justify-center aspect-[1/1] rounded-[0.5px] focus-visible:outline-[2px] focus-visible:outline-accent-9 focus-visible:outline-offset-[2px]">
+                <PasswordToggleField.Icon
+                  visible={<EyeOpenIcon />}
+                  hidden={<EyeClosedIcon />}
+                />
+              </PasswordToggleField.Toggle>
+            </div>
+          </PasswordToggleField.Root>
         </Form.Control>
+        <Form.Message
+          className="text-[13px] text-white opacity-80"
+          match="valueMissing"
+        >
+          Enter your password
+        </Form.Message>
+        <Form.Message
+          className="text-[13px] text-white opacity-80"
+          match="typeMismatch"
+        >
+          Please provide a valid password
+        </Form.Message>
+        <Form.Message
+          className="text-[13px] text-white opacity-80"
+          match={(value) => !value.match(strongPasswordRegex)}
+        >
+          Strong password must contain numbers, letters, at least one special
+          symbol, at least one uppercase and length must be no lower than 8
+        </Form.Message>
       </Form.Field>
       <Form.Field className="mb-2.5 grid" name="password2">
         <div className="flex items-baseline justify-between">
@@ -129,11 +162,28 @@ const SignUpForm: React.FC = () => {
           </Form.Message>
         </div>
         <Form.Control asChild>
-          <input className={inputClass} type="password" required />
+          <PasswordToggleField.Root>
+            <div className="flex items-center justify-center">
+              <PasswordToggleField.Input
+                className={
+                  formInput +
+                  "all-[unset] box-border h-[18px] text-[15px] text-inherit leading-[1] selection:bg-blackA6 selection:text-white"
+                }
+                required
+                id="password2"
+              />
+              <PasswordToggleField.Toggle className="relative left-[-25] all-[unset] box-border h-[18px] text-[15px] text-inherit leading-[1] flex items-center justify-center aspect-[1/1] rounded-[0.5px] focus-visible:outline-[2px] focus-visible:outline-accent-9 focus-visible:outline-offset-[2px]">
+                <PasswordToggleField.Icon
+                  visible={<EyeOpenIcon />}
+                  hidden={<EyeClosedIcon />}
+                />
+              </PasswordToggleField.Toggle>
+            </div>
+          </PasswordToggleField.Root>
         </Form.Control>
       </Form.Field>
       <Form.Submit asChild>
-        <button className={buttonClass}>Sign in</button>
+        <button className={formButton}>Sign in</button>
       </Form.Submit>
       <div className="mt-3">
         <Link href="/signin" className="text-[10px]">

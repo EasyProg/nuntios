@@ -1,4 +1,5 @@
 // app/api/socket/route.js
+import { createServer } from "http";
 import { NextResponse } from "next/server";
 import { Server } from "socket.io";
 
@@ -8,21 +9,27 @@ declare global {
 
 export async function GET() {
   if (!global.io) {
-    const { createServer } = require("http");
-    const { Server } = require("socket.io");
+    // const { Server } = require("socket.io");
 
     const httpServer = createServer();
-    global.io = new Server(httpServer);
+    global.io = new Server(httpServer, {
+      cors: {
+        origin: "https://localhost:3000",
+        methods: ["GET", "POST"],
+      },
+    });
 
     httpServer.listen(3001, () => {
       console.log("Socket.IO server running on port 3001");
     });
 
     global.io?.on("connection", (socket) => {
-      console.log("a user connected");
-
       socket.on("join-room", (roomId) => {
         socket.join(roomId);
+      });
+
+      socket.on("connect_error", (err) => {
+        console.log(`connect_error due to ${err.message}`);
       });
 
       socket.on("send-message", (data) => {

@@ -5,7 +5,7 @@ import { verifyToken } from "./helpers/auth-client";
 
 export async function middleware(request: NextRequest) {
   const token = await getAuthToken();
-  const isValid = verifyToken(token || "");
+  const isValid = await verifyToken(token || "");
 
   if (!isValid) {
     return NextResponse.redirect(new URL("/signin", request.url));
@@ -20,5 +20,5 @@ export async function middleware(request: NextRequest) {
 
 // Config for routes
 export const config = {
-  matcher: ["/chat", "/"],
+  matcher: ["/((?!signin|signup|api|_next|fonts|examples|$).*)", "/"],
 };

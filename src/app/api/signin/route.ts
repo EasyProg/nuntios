@@ -34,7 +34,6 @@ export async function POST(request: Request) {
       return NextResponse.json(token);
     } else return new NextResponse("No such user", { status: 403 });
   } catch (error: any) {
-    console.log({ error });
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

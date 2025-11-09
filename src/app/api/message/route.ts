@@ -1,49 +1,28 @@
-import { User } from "@prisma/client";
-import { revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
+import prisma from "../../actions/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const email = request.cookies.get("user")?.value;
     const body = await request.json();
-    const { name, users } = body;
-
-    if (!users || !name) {
-      return new NextResponse("Missing info", { status: 400 });
-    }
-    const currentUser = await prisma.user.findUnique({
-      where: {
-        email,
+    const { message, chatId } = body;
+    const { name, createdAt, sendUserId } = message;
+    const chat = await prisma.chat.findFirst({
+      cacheStrategy: {
+        ttl: 60,
+      },
+      where: { chatId },
+    });
+    const res = await prisma.message.create({
+      data: {
+        name,
+        createdAt,
+        chatId: Number(chat?.id),
+        senderId: Number(sendUserId),
       },
     });
-
-    const uniqId = uuidv4();
-
-    if (currentUser) {
-      const chat = await prisma.chat.create({
-        data: {
-          name,
-          chatId: uniqId,
-          users: {
-            connect: [
-              ...users.map((item: User) => ({ id: item.id })),
-              { id: currentUser.id },
-            ],
-          },
-        },
-        include: {
-          users: true,
-        },
-      });
-      return NextResponse.json(chat);
-    }
+    return NextResponse.json(res);
   } catch (error: any) {
     console.log({ error });
     return new NextResponse("Internal Error", { status: 500 });
-  } finally {
-    revalidateTag(`chat`);
-    redirect("/chat");
   }
 }
