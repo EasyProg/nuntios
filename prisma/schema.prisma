@@ -36,8 +36,8 @@ model Message {
   name    String
   createdAt     DateTime @default(now())
   chatId  Int @db.Integer
-  chat    Chat @relation(fields: [chatId], references: [id])
+  chat    Chat? @relation(fields: [chatId], references: [id])
   senderId Int
-  sendUser User   @relation(fields: [senderId], references: [id])
+  sendUser User?   @relation(fields: [senderId], references: [id])
 }
 
