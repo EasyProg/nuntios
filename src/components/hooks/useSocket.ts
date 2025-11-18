@@ -11,7 +11,7 @@ export default function useSocket(): Socket | null {
   useEffect(() => {
     // Initialization
     const token = getAuthToken();
-    const socketInstance = io("http://localhost:3001");
+    const socketInstance = io("http://localhost:3001", { auth: token });
 
     setSocket(socketInstance as any);
 

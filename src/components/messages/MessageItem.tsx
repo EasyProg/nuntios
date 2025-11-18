@@ -16,7 +16,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   const formattedDate =
     createdAt instanceof Date
       ? createdAt?.toTimeString().substring(0, 9)
-      : createdAt?.substring(11, 19);
+      : (createdAt as unknown as string)?.substring(11, 19);
   return (
     <Flex className="bg-cyan-500/40 rounded-md m-3" justify="between">
       <Flex direction="column" className="p-3">

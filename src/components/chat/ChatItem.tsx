@@ -18,12 +18,7 @@ export const ChatItem: React.FC<ChatProps> = ({
   isActive,
 }) => (
   <div className={isActive ? chatItemActive : chatItem}>
-    <Link
-      className="!outline-none"
-      // href={`/chat/${chatId}`}
-      href={`/chat/${chatId}/`}
-      shallow={true}
-    >
+    <Link className="!outline-none" href={`/chat/${chatId}/`} shallow={true}>
       <div className="mb-2">{name}</div>
       <div>{lastMessageAt}</div>
     </Link>

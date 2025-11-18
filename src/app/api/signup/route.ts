@@ -5,7 +5,6 @@ import prisma from "../../actions/prisma";
 
 export async function POST(request: Request) {
   try {
-    // const coookieStore = await cookies();
     const body = await request.json();
     const { email, password, name } = body;
 

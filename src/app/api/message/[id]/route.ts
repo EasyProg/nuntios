@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
       : await prisma.message.deleteMany({
           where: { createdAt: { equals: date } },
         });
-    // revalidatePath(`/chat/${chatId}`);
     return NextResponse.json(res);
   } catch (error: any) {
     return new NextResponse("Internal Error", { status: 500 });

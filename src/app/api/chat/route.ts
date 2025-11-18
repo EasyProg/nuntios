@@ -5,7 +5,6 @@ import { User } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
-// import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,8 +20,6 @@ export async function POST(request: NextRequest) {
         email: userData?.email,
       },
     });
-
-    // const uniqId = uuidv4();
 
     if (currentUser) {
       const chat = await prisma.chat.create({
@@ -41,7 +38,6 @@ export async function POST(request: NextRequest) {
         },
       });
       return NextResponse.json(chat);
-      // redirect(`/chat/${chat.id}`);
     }
   } catch (error: any) {
     return new NextResponse("Internal Error", { status: 500 });

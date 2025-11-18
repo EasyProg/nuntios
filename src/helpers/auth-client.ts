@@ -37,7 +37,6 @@ export async function verifyToken(token: string): Promise<UserDataType> {
       new TextEncoder().encode(JWT_SECRET),
     );
     return payload;
-    // return jwt.verify(token, JWT_SECRET) as UserPayload;
   } catch (error) {
     return null;
   }

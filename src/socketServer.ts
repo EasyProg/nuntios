@@ -1,10 +1,10 @@
 import axios from "axios";
 import { createServer } from "http";
-// import { RedirectType, redirect } from "next/navigation";
 import { Server, Socket } from "socket.io";
-// import nextConfig from "../next.config";
 
 const localHost = "http://localhost:3000";
+
+type GlobalType = { io?: Server };
 
 const server = createServer();
 const serverIo = new Server(server, {
@@ -14,7 +14,7 @@ const serverIo = new Server(server, {
   },
 });
 
-global.io = serverIo;
+(global as GlobalType).io = serverIo;
 
 serverIo.on("connection", (socket: Socket) => {
   console.log("New connection:", socket.id);
@@ -34,11 +34,10 @@ serverIo.on("connection", (socket: Socket) => {
         message,
         chatId,
       });
-      global.io?.to(chatId).emit("receive-message", message);
+      (global as GlobalType).io?.to(chatId).emit("receive-message", message);
     } catch (error: unknown) {
       console.error("API call failed:", error);
 
-      // Отправка ошибки клиенту
       socket.emit("apiResponse", {
         status: "error",
         message: error,

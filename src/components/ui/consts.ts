@@ -16,7 +16,6 @@ const chatItemActive =
 const chatInput =
   "w-auto min-w-100 h-auto border-indigo-500 !rounded-md !text-gray-500 !bg-gray-600/30 p-3 outline-none min-h-40 w-full";
 
-// "inline-flex h-[35px] w-full flex-1 items-center justify-center rounded px-2.5 text-[15px] leading-none shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
 export {
   centerLayout,
   formInput,

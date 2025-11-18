@@ -1,6 +1,5 @@
 "use client";
 
-// import { createChat } from "@/app/actions/createChat";
 import { useMapUsers } from "@/components/hooks/useMapUsers";
 import { UsersProps } from "@/components/types";
 import { formButton, formInput } from "@/components/ui/consts";
@@ -41,7 +40,7 @@ export const ChatCreateDialog: React.FC<UsersProps> = ({ users }) => {
         users: usersValue.map((item) => ({ id: item.value })),
         chatId,
       })
-      .then((res) => {
+      .then(() => {
         toast.info(`Chat ${nameValue} created`);
         setOpen(false);
         router.push(`/chat/${chatId}`);
@@ -59,7 +58,7 @@ export const ChatCreateDialog: React.FC<UsersProps> = ({ users }) => {
       <Dialog.Trigger asChild>
         <PlusIcon
           color="#606060"
-          className="hover:cursor-pointer hover:color-zinc-400"
+          className="rounded-md hover:bg-cyan-600 hover:cursor-pointer"
           width={24}
           height={24}
           onClick={() => setOpen(true)}
