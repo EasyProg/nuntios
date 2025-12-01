@@ -25,6 +25,7 @@ model Chat {
   chatId  String
   createdAt     DateTime @default(now())
   lastMessageAt DateTime @default(now())
+  lastMessage String? 
   userIds Int[] @db.Integer
   users   User[] 
   messageIds Int[] @db.Integer
@@ -33,7 +34,7 @@ model Chat {
 
 model Message {
   id      Int  @id @default(autoincrement())
-  name    String
+  text    String
   createdAt     DateTime @default(now())
   chatId  Int @db.Integer
   chat    Chat? @relation(fields: [chatId], references: [id])
