@@ -183,7 +183,7 @@ const SignUpForm: React.FC = () => {
         </Form.Control>
       </Form.Field>
       <Form.Submit asChild>
-        <button className={formButton}>Sign in</button>
+        <button className={formButton}>Sign Up</button>
       </Form.Submit>
       <div className="mt-3">
         <Link href="/signin" className="text-[10px]">

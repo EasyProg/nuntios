@@ -1,15 +1,16 @@
-import { createChat } from "@/app/actions/createChat";
+// import { createChat } from "@/app/actions/createChat";
 import { Chat, User } from "@prisma/client";
 
-export type CreateChatProps = {
-  createChat: typeof createChat;
-};
+export type ChatWithUsers = (Chat & { users: User[] }) | null;
 
 export type UsersProps = {
   users: User[];
 };
 
-export type Chats = (Omit<Chat, "lastMessageAt"> & { lastMessageAt: string })[];
+export type ChatItem = Omit<Chat, "lastMessageAt"> & { lastMessageAt: string };
+export type Chats = ChatItem[];
+
+// export type Chats = (Omit<Chat, "lastMessageAt"> & { lastMessageAt: string })[];
 
 export type UserDataType = {
   id?: string;

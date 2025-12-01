@@ -58,7 +58,7 @@ export const ChatCreateDialog: React.FC<UsersProps> = ({ users }) => {
       <Dialog.Trigger asChild>
         <PlusIcon
           color="#606060"
-          className="rounded-md hover:bg-cyan-600 hover:cursor-pointer"
+          className="rounded-md hover:bg-cyan-800 hover:cursor-pointer"
           width={24}
           height={24}
           onClick={() => setOpen(true)}

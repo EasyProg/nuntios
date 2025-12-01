@@ -35,7 +35,7 @@ export const Header: React.FC<UsersProps> = ({ users }) => {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <HamburgerMenuIcon
-            className="hover:cursor-pointer rounded-md hover:bg-cyan-600"
+            className="hover:cursor-pointer rounded-md hover:bg-cyan-800"
             color="#606060"
             width={24}
             height={24}

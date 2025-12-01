@@ -57,7 +57,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
     socket?.emit("send-message", {
       chatId,
       message: {
-        name: value,
+        text: value,
         createdAt: new Date(),
         sendUserId: user?.id,
       },

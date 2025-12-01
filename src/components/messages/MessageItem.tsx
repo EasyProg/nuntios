@@ -1,39 +1,59 @@
 "use client";
 
-import { Message, User } from "@prisma/client";
+import { formattedDate } from "@/helpers/helpers";
 import { Flex, Text } from "@radix-ui/themes";
+import { ContextMenu } from "radix-ui";
 
 type MessageItemProps = {
-  message: Partial<Message & { sendUser: User }>;
+  id?: number;
+  text?: string;
+  createdAt?: Date;
+  isAuthor: boolean;
+  senderName?: string | null;
   onDelete: (messageId?: number, createdAt?: Date) => void;
 };
 
 export const MessageItem: React.FC<MessageItemProps> = ({
-  message,
+  id,
+  text,
+  senderName,
+  createdAt,
+  isAuthor,
   onDelete,
 }) => {
-  const { name, createdAt, id } = message;
-  const formattedDate =
-    createdAt instanceof Date
-      ? createdAt?.toTimeString().substring(0, 9)
-      : (createdAt as unknown as string)?.substring(11, 19);
   return (
-    <Flex className="bg-cyan-500/40 rounded-md m-3" justify="between">
-      <Flex direction="column" className="p-3">
-        <Text className="text-xs text-gray-400 font-bold">
-          {message?.sendUser?.name}
-        </Text>
-        <Text>{name}</Text>
-      </Flex>
-      <Text className="flex space-between text-xs self-end pr-2 pb-1 font-bold text-gray-400">
-        {formattedDate}
-        <div
-          onClick={() => onDelete(id, createdAt)}
-          className="ml-3 cursor-pointer"
+    <ContextMenu.Root>
+      <ContextMenu.Trigger className="ContextMenuTrigger">
+        <Flex
+          className={`${
+            isAuthor ? "bg-cyan-200/40" : "bg-cyan-500/40"
+          } rounded-md m-3 ${isAuthor ? "self-end" : "self-start"}`}
+          justify="between"
         >
-          x
-        </div>
-      </Text>
-    </Flex>
+          <Flex direction="column" className="p-3">
+            <Text className="text-xs text-gray-400 font-bold">
+              {isAuthor ? "" : senderName}
+            </Text>
+            <Text>{text}</Text>
+          </Flex>
+          <Text className="flex space-between text-xs self-end pr-2 pb-1 font-bold text-gray-400">
+            {formattedDate(createdAt)}
+          </Text>
+        </Flex>
+      </ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <ContextMenu.Content className="rounded-md min-h-[50] min-w-[100] bg-cyan-700/40 cursor-pointer outline-none">
+          <ContextMenu.Item
+            onClick={() => onDelete(id, createdAt)}
+            className="bg-cyan-700/40 rounded-md text-red-100 p-2 outline-none hover:bg-cyan-300/40"
+          >
+            Remove
+          </ContextMenu.Item>
+          <ContextMenu.Item className="bg-cyan-700/40 rounded-md text-red-100 p-2 outline-none hover:bg-cyan-300/40">
+            Forward
+          </ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
   );
 };

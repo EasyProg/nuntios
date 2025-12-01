@@ -34,7 +34,7 @@ export default async function RootLayout({
       >
         <AuthProvider initialUser={user}>
           <div className="bg-stone-800 backdrop-blur-2xl h-15 shadow-xl font-mono shadow-cyan-500/50 backdrop-blur-lg flex justify-center text-lg items-center">
-            <p className="text-cyan-500">Nuntios v.0.1</p>
+            <p className="text-cyan-500">Nuntios v.0.2</p>
             <GlobeIcon width={24} height={24} color="#606060" />
           </div>
           <div>{children}</div>

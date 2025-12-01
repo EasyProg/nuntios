@@ -1,5 +1,6 @@
 "use client";
 
+import { modifyChats } from "@/helpers/helpers";
 import { Chat, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { ChatList } from "../chat/ChatList";
@@ -15,18 +16,8 @@ export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput, users }) => {
   const [chats, setChats] = useState<Chats>([]);
 
   useEffect(() => {
-    const now = Date.now();
-    const modifyChats = chatsInput.map((item) => {
-      const isMoreOneDay =
-        (now - item.lastMessageAt.getTime()) / (1000 * 60 * 60) > 24;
-      return {
-        ...item,
-        lastMessageAt: isMoreOneDay
-          ? item.lastMessageAt.toLocaleDateString()
-          : item.lastMessageAt.toLocaleTimeString(),
-      };
-    });
-    setChats(modifyChats);
+    const chatsWithStringDate = modifyChats(chatsInput);
+    setChats(chatsWithStringDate);
   }, [chatsInput]);
 
   return (
