@@ -1,7 +1,6 @@
 import prisma from "@/app/actions/prisma";
 import { UserDataType } from "@/components/types";
 import { getCurrentUser } from "@/helpers/auth";
-import { User } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,17 +19,13 @@ export async function POST(request: NextRequest) {
         email: userData?.email,
       },
     });
-
     if (currentUser) {
       const chat = await prisma.chat.create({
         data: {
           name,
           chatId,
           users: {
-            connect: [
-              ...users.map((item: User) => ({ id: item.id })),
-              { id: currentUser.id },
-            ],
+            connect: [...users, { id: currentUser.id }],
           },
         },
         include: {

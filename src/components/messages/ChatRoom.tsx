@@ -20,6 +20,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
   const { user } = useAuth();
 
   const handleDelete = async (id?: number, date?: Date) => {
+    const preLastMessage = chatMessages[chatMessages.length - 2];
     if (id) {
       await axios.post(`/api/message/${id}`, {
         id,
@@ -28,11 +29,19 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
     } else if (date) {
       await axios.post(`/api/message/${date}`, {
         date,
+        message: preLastMessage,
+        chatId,
       });
       setChatMessages([
         ...chatMessages.filter((item) => item.createdAt !== date),
       ]);
     }
+    // also need to make modification in Chat for the last message
+    //
+    socket?.emit("update-chat-message", {
+      message: preLastMessage,
+      chatId,
+    });
   };
 
   useEffect(() => {

@@ -5,10 +5,9 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { DropdownMenu } from "radix-ui";
 import { toast } from "react-toastify";
-import { UsersProps } from "../types";
 import { ChatCreateDialog } from "./createChat/ChatCreateDialog";
 
-export const Header: React.FC<UsersProps> = ({ users }) => {
+export const Header: React.FC = () => {
   const { user } = useAuth();
   const router = useRouter();
   const handleSignOut = async (e: React.FormEvent) => {
@@ -65,7 +64,7 @@ export const Header: React.FC<UsersProps> = ({ users }) => {
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
       <p className="text-cyan-500">{user?.name}</p>
-      <ChatCreateDialog users={users} />
+      <ChatCreateDialog />
     </div>
   );
 };

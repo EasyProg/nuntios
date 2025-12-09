@@ -3,48 +3,71 @@
 import { useUsers } from "@/app/context/UsersContext";
 import { useMapUsers } from "@/components/hooks/useMapUsers";
 import { formButton, formInput } from "@/components/ui/consts";
+import { mapUsersOption } from "@/helpers/helpers";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
+import { Cross1Icon } from "@radix-ui/react-icons";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Form } from "radix-ui";
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Select, { MultiValue } from "react-select";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
+
+type ChatUpdateDialogProps = {
+  name: string;
+  trigger: ReactNode;
+  chatId: string;
+  dbId: number;
+};
 
 interface Option {
   value: number;
   label: string | null;
 }
 
-export const ChatCreateDialog: React.FC = () => {
-  const [nameValue, setNameValue] = useState("");
-  const [open, setOpen] = useState(false);
+export const ChatUpdateDialog: React.FC<ChatUpdateDialogProps> = ({
+  name: prevName,
+  chatId,
+  trigger,
+  dbId,
+}) => {
+  const [nameValue, setNameValue] = useState(prevName);
   const { users } = useUsers();
+  const [open, setOpen] = useState(false);
   const modifiedUsers = useMapUsers(users);
+  const [selectedUsers, setSelectedUsers] = useState<Option[]>([]);
   const [usersValue, setUsersValue] =
     useState<MultiValue<Option>>(modifiedUsers);
   const router = useRouter();
 
-  const handleChatCreate = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const selectedUsers = await axios.get(`/api/chat/${chatId}/users`);
+        setSelectedUsers(mapUsersOption(selectedUsers.data));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleChatUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const chatId = uuidv4();
     if (!nameValue) {
       toast.warning("Please input information!");
       return;
     }
     await axios
-      .post("/api/chat", {
+      .put(`/api/chat/${chatId}`, {
         name: nameValue,
+        id: dbId,
         users: usersValue.map((item) => ({ id: item.value })),
-        chatId,
       })
       .then(() => {
-        toast.info(`Chat ${nameValue} created`);
+        toast.info(`Chat ${nameValue} updated`);
         setOpen(false);
-        router.push(`/chat/${chatId}`);
         router.refresh();
       })
       .catch((error) => {
@@ -56,14 +79,7 @@ export const ChatCreateDialog: React.FC = () => {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
-        <PlusIcon
-          color="#606060"
-          className="rounded-md hover:bg-cyan-800 hover:cursor-pointer"
-          width={24}
-          height={24}
-        />
-      </Dialog.Trigger>
+      <Dialog.Trigger className="w-[100%]">{trigger}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-blackA6 data-[state=open]:animate-overlayShow" />
         <Dialog.Content className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-zinc-900 p-[30px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow">
@@ -71,11 +87,11 @@ export const ChatCreateDialog: React.FC = () => {
             hidden
             className="m-0 text-[17px] font-medium text-mauve12"
           >
-            Create chat
+            Update chat
           </Dialog.Title>
           <fieldset className="mb-[15px] flex items-center gap-5">
             <label
-              className="min-w-[90px] text-right text-[15px] text-violet11"
+              className="min-w-[90px] text-right text-[15px] text-violet"
               htmlFor="name"
             >
               Chat Name
@@ -83,7 +99,7 @@ export const ChatCreateDialog: React.FC = () => {
             <input
               className={formInput}
               id="name"
-              defaultValue=""
+              defaultValue={nameValue}
               onChange={(e) => setNameValue(e.target.value)}
             />
           </fieldset>
@@ -98,6 +114,7 @@ export const ChatCreateDialog: React.FC = () => {
               options={modifiedUsers}
               isMulti={true}
               onChange={setUsersValue}
+              defaultValue={selectedUsers}
               classNames={{
                 control: () => "!bg-zinc-900 min-w-85",
                 menu: () => "!bg-zinc-900",
@@ -111,8 +128,8 @@ export const ChatCreateDialog: React.FC = () => {
             />
           </fieldset>
           <Form.Submit asChild>
-            <button className={formButton} onClick={handleChatCreate}>
-              Create
+            <button className={formButton} onClick={handleChatUpdate}>
+              Update
             </button>
           </Form.Submit>
           <Dialog.Close>

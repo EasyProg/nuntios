@@ -25,7 +25,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     <AlertDialog.Portal>
       <AlertDialog.Overlay className="bg-black/40 fixed inset-0 animate-overlayShow" />
       <AlertDialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black rounded-lg shadow-lg w-[90vw] max-w-[500px] max-h-[85vh] p-6 animate-contentShow focus:outline-none">
-        <AlertDialog.Title className="text-gray-900 text-lg font-medium">
+        <AlertDialog.Title className="text-gray-700 text-lg font-medium">
           {headerText}
         </AlertDialog.Title>
         <AlertDialog.Description className="text-gray-600 text-sm leading-relaxed mb-5">

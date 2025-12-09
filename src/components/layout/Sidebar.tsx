@@ -1,10 +1,11 @@
 "use client";
 
-import { modifyChats } from "@/helpers/helpers";
+import { isDate, modifyChats, modifyDate } from "@/helpers/helpers";
 import { Chat, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { ChatList } from "../chat/ChatList";
-import { Chats } from "../types";
+import useSocket from "../hooks/useSocket";
+import { ChatsLocalized } from "../types";
 import { Header } from "./Header";
 
 type Sidebar = {
@@ -13,16 +14,49 @@ type Sidebar = {
 };
 
 export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput, users }) => {
-  const [chats, setChats] = useState<Chats>([]);
+  const [chats, setChats] = useState<ChatsLocalized>([]);
+  const socket = useSocket();
 
   useEffect(() => {
     const chatsWithStringDate = modifyChats(chatsInput);
     setChats(chatsWithStringDate);
   }, [chatsInput]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("update-chat-message", ({ message, chatId }) => {
+      const localDate = isDate(message.createdAt)
+        ? message.createdAt
+        : new Date(message.createdAt);
+      const newChats = [...chats]
+        .map((chat) => {
+          if (chat.chatId === chatId) {
+            return {
+              ...chat,
+              lastMessage: message.text,
+              lastMessageAt: message.createdAt,
+              lastMessageAtLocalized: modifyDate(localDate),
+            };
+          } else return chat;
+        })
+        .sort(
+          (a, b) =>
+            new Date(b.lastMessageAt).valueOf() -
+            new Date(a.lastMessageAt).valueOf(),
+        );
+      setChats(newChats);
+    });
+
+    return () => {
+      socket;
+      socket.off("update-chat-message");
+    };
+  }, [socket]);
+
   return (
     <div className="w-3xs p-3 h-screen text-xs">
-      <Header users={users} />
+      <Header />
       <div className="flex items-start h-full w-full mt-2">
         {!chats.length ? (
           "No active chats please create some ..."

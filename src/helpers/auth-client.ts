@@ -7,7 +7,7 @@ import { SignJWT, jwtVerify } from "jose";
 const token = await new SignJWT({ userId: 123 })
   .setProtectedHeader({ alg: "HS256" })
   .setIssuedAt()
-  .setExpirationTime("1h")
+  .setExpirationTime("2h")
   .sign(new TextEncoder().encode("secret"));
 
 // Верификация токена
@@ -26,7 +26,7 @@ export async function generateToken(payload: UserPayload): Promise<string> {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1h")
+    .setExpirationTime("2h")
     .sign(new TextEncoder().encode(JWT_SECRET));
 }
 

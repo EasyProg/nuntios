@@ -24,6 +24,14 @@ serverIo.on("connection", (socket: Socket) => {
     socket.join(roomId);
   });
 
+  socket.on("update-chat-message", async (data) => {
+    const { chatId, message } = data;
+    (global as GlobalType).io?.emit("update-chat-message", {
+      message,
+      chatId,
+    });
+  });
+
   socket.on("send-message", async (data) => {
     const { chatId, message } = data;
     // Save data to BD than send to all in group
@@ -34,7 +42,12 @@ serverIo.on("connection", (socket: Socket) => {
         message,
         chatId,
       });
+      // set item to storage get full fallback return
       (global as GlobalType).io?.to(chatId).emit("receive-message", message);
+      (global as GlobalType).io?.emit("update-chat-message", {
+        message,
+        chatId,
+      });
     } catch (error: unknown) {
       console.error("API call failed:", error);
 
