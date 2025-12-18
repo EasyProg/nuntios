@@ -3,9 +3,11 @@
 import { useAuth } from "@/app/context/AuthContext";
 import { Message } from "@prisma/client";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSocket from "../hooks/useSocket";
+import { MessageCopyItemProps } from "../types";
 import { MessageBox } from "./MessageBox";
+import { MessageCopy } from "./MessageCopy";
 import { MessageInput } from "./MessageInput";
 
 type ChatProps = {
@@ -16,28 +18,34 @@ type ChatProps = {
 export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
   const [chatMessages, setChatMessages] =
     useState<Partial<Message>[]>(messages);
+  const [textInputValue, setTextInputValue] = useState("");
+  const [replyMessage, setReplyMessage] = useState<MessageCopyItemProps | null>(
+    null,
+  );
   const socket = useSocket();
   const { user } = useAuth();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleDelete = async (id?: number, date?: Date) => {
-    const preLastMessage = chatMessages[chatMessages.length - 2];
+    const filteredItems = [
+      ...chatMessages.filter((item) =>
+        id ? item.id !== id : item.createdAt !== date,
+      ),
+    ];
+    const preLastMessage = filteredItems.at(-1);
     if (id) {
       await axios.post(`/api/message/${id}`, {
         id,
       });
-      setChatMessages([...chatMessages.filter((item) => item.id !== id)]);
+      setChatMessages(filteredItems);
     } else if (date) {
       await axios.post(`/api/message/${date}`, {
         date,
         message: preLastMessage,
         chatId,
       });
-      setChatMessages([
-        ...chatMessages.filter((item) => item.createdAt !== date),
-      ]);
+      setChatMessages(filteredItems);
     }
-    // also need to make modification in Chat for the last message
-    //
     socket?.emit("update-chat-message", {
       message: preLastMessage,
       chatId,
@@ -52,7 +60,10 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
 
     // Listening to new messages
     socket.on("receive-message", (newMessage) => {
-      setChatMessages((prev) => [...prev, newMessage]);
+      setChatMessages((prev) => [
+        ...prev,
+        { ...newMessage, createdAt: new Date(newMessage.createdAt) },
+      ]);
     });
 
     return () => {
@@ -61,16 +72,27 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
     };
   }, [socket, chatId]);
 
+  const handleReplyMessage = (message: Partial<Message>) => {
+    inputRef?.current?.focus();
+    setTextInputValue("");
+    setReplyMessage({ ...message });
+  };
+
   const handleSendMessage = async (value: string) => {
     // Sending message with socket
-    socket?.emit("send-message", {
-      chatId,
-      message: {
-        text: value,
-        createdAt: new Date(),
-        sendUserId: user?.id,
-      },
-    });
+    setReplyMessage(null);
+    if (value !== "") {
+      console.log(new Date());
+      socket?.emit("send-message", {
+        chatId,
+        message: {
+          text: value,
+          createdAt: new Date(),
+          sendUserId: user?.id,
+          replyMessage,
+        },
+      });
+    }
   };
 
   return (
@@ -79,8 +101,16 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
         messages={chatMessages}
         chatId={chatId}
         handleDelete={handleDelete}
+        handleReplyMessage={handleReplyMessage}
       />
-      <MessageInput handleSendMessage={handleSendMessage} chatId={chatId} />
+      <MessageInput
+        handleSendMessage={handleSendMessage}
+        chatId={chatId}
+        replyMessage={<MessageCopy {...replyMessage} />}
+        ref={inputRef}
+        value={textInputValue}
+        onChange={setTextInputValue}
+      />
     </div>
   );
 };

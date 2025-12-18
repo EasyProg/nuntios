@@ -6,19 +6,24 @@ const validatePassword = (password: string) => {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
   return regex.test(password);
 };
-const formattedDate = (createdAt?: string | Date) => {
-  if (!createdAt) return "";
-  return createdAt instanceof Date
-    ? createdAt?.toTimeString().substring(0, 9)
-    : createdAt.substring(11, 19);
-};
+const formatDateToTime = (createdAt?: Date) =>
+  createdAt?.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 
 const modifyDate = (date: Date): string => {
   const now = Date.now();
+  const timeSymbols = 9;
   const isMoreOneDay = new Date(now).getDate() !== date.getDate();
   return isMoreOneDay
-    ? date.toString().substring(0, date.toString().indexOf("GMT"))
-    : date.toLocaleTimeString();
+    ? date.toString().substring(0, date.toString().indexOf("GMT") - timeSymbols)
+    : date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
 };
 
 const modifyDateFromString = (dateInput: string): string => {
@@ -54,7 +59,7 @@ export const mapUsersOption = (users: User[]) =>
 
 export {
   validatePassword,
-  formattedDate,
+  formatDateToTime,
   modifyDateFromString,
   modifyDate,
   modifyChats,

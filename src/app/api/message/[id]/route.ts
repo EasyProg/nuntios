@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
     await prisma.chat.update({
       where: { id: chat?.id },
       data: {
-        lastMessageAt: message.lastMessageAt,
-        lastMessage: message.lastMessage,
+        lastMessageAt: message ? message.createdAt : new Date(),
+        lastMessage: message ? message.text : "",
       },
     });
     return NextResponse.json(res);

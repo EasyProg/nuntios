@@ -40,5 +40,8 @@ model Message {
   chat    Chat? @relation(fields: [chatId], references: [id])
   senderId Int
   sendUser User?   @relation(fields: [senderId], references: [id])
+  replyId Int?
+  replyMessage Message?  @relation("MessageToReply", fields: [replyId], references: [id] )
+  replies Message[] @relation("MessageToReply")
 }
 

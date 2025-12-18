@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { message, chatId } = body;
-    const { text, createdAt, sendUserId } = message;
+    const { text, createdAt, sendUserId, replyMessage } = message;
     const chat = await prisma.chat.findFirst({
       cacheStrategy: {
         ttl: 60,
@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
         createdAt,
         chatId: Number(chat?.id),
         senderId: Number(sendUserId),
+        replyId: replyMessage?.id,
       },
     });
     await prisma.chat.update({

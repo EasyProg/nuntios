@@ -1,7 +1,7 @@
 "use client";
 
 import { isDate, modifyChats, modifyDate } from "@/helpers/helpers";
-import { Chat, User } from "@prisma/client";
+import { Chat } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { ChatList } from "../chat/ChatList";
 import useSocket from "../hooks/useSocket";
@@ -10,10 +10,9 @@ import { Header } from "./Header";
 
 type Sidebar = {
   chats: Chat[];
-  users: User[];
 };
 
-export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput, users }) => {
+export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput }) => {
   const [chats, setChats] = useState<ChatsLocalized>([]);
   const socket = useSocket();
 
@@ -25,28 +24,31 @@ export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput, users }) => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("update-chat-message", ({ message, chatId }) => {
-      const localDate = isDate(message.createdAt)
-        ? message.createdAt
-        : new Date(message.createdAt);
-      const newChats = [...chats]
-        .map((chat) => {
-          if (chat.chatId === chatId) {
-            return {
-              ...chat,
-              lastMessage: message.text,
-              lastMessageAt: message.createdAt,
-              lastMessageAtLocalized: modifyDate(localDate),
-            };
-          } else return chat;
-        })
-        .sort(
-          (a, b) =>
-            new Date(b.lastMessageAt).valueOf() -
-            new Date(a.lastMessageAt).valueOf(),
-        );
-      setChats(newChats);
-    });
+    socket.on(
+      "update-chat-message",
+      ({ message = { text: "", createdAt: "" }, chatId }) => {
+        const localDate = isDate(message.createdAt)
+          ? message.createdAt
+          : new Date(message.createdAt);
+        const newChats = [...chats]
+          .map((chat) => {
+            if (chat.chatId === chatId) {
+              return {
+                ...chat,
+                lastMessage: message.text,
+                lastMessageAt: message.createdAt,
+                lastMessageAtLocalized: modifyDate(localDate),
+              };
+            } else return chat;
+          })
+          .sort(
+            (a, b) =>
+              new Date(b.lastMessageAt).valueOf() -
+              new Date(a.lastMessageAt).valueOf(),
+          );
+        setChats(newChats);
+      },
+    );
 
     return () => {
       socket;

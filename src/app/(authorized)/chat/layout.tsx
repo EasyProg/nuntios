@@ -16,7 +16,7 @@ export default async function ChatsLayout({
     <Suspense fallback={<Spinner />}>
       <UsersProvider initialUsers={users}>
         <div className="flex items-start">
-          <Sidebar chats={chats ?? []} users={users} />
+          <Sidebar chats={chats ?? []} />
           {children}
         </div>
       </UsersProvider>

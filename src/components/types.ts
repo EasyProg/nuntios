@@ -16,3 +16,10 @@ export type UserDataType = {
   iat?: number;
   exp?: number;
 } | null;
+
+export type MessageCopyItemProps = {
+  id?: number;
+  text?: string;
+  createdAt?: Date;
+  senderName?: string | null;
+};

@@ -30,14 +30,14 @@ export const ChatItem: React.FC<ChatProps> = ({
       <ContextMenu.Trigger>
         <div className={isActive ? chatItemActive : chatItem}>
           <Link
-            className="!outline-none flex h-full flex-col justify-between min-h-14"
+            className="!outline-none flex h-full flex-col justify-between min-h-14 max-w-[220px] overflow-hidden"
             href={`/chat/${chatId}/`}
             shallow={true}
           >
             <div className="mb-2">{name}</div>
             <div className="mb-1">{lastMessage}</div>
             <div className="flex justify-end items-end text-[8px]">
-              {lastMessageAt}
+              {lastMessage && lastMessageAt}
             </div>
           </Link>
         </div>

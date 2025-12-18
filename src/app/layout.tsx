@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-hidden`}
       >
         <AuthProvider initialUser={user}>
           <div className="bg-stone-800 backdrop-blur-2xl h-15 shadow-xl font-mono shadow-cyan-500/50 backdrop-blur-lg flex justify-center text-lg items-center">

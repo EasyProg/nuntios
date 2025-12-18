@@ -20,6 +20,7 @@ export const getMessages = async (id: string) => {
       },
       include: {
         sendUser: true,
+        replyMessage: true,
       },
     });
     return messages;

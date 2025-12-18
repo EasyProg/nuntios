@@ -41,17 +41,16 @@ export const ChatCreateDialog: React.FC = () => {
         users: usersValue.map((item) => ({ id: item.value })),
         chatId,
       })
-      .then(() => {
-        toast.info(`Chat ${nameValue} created`);
-        setOpen(false);
-        router.push(`/chat/${chatId}`);
-        router.refresh();
-      })
+      .then(() => {})
       .catch((error) => {
         toast.error(`${error.status}-${error.message}`, {
           position: "top-right",
         });
       });
+    toast.info(`Chat ${nameValue} created`);
+    setOpen(false);
+    router.push(`/chat/${chatId}`);
+    router.refresh();
   };
 
   return (
