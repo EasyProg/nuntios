@@ -1,3 +1,4 @@
+import { getChat } from "@/app/actions/getChat";
 import getMessages from "@/app/actions/getMessages";
 import { ChatRoom } from "@/components/messages/ChatRoom";
 
@@ -7,8 +8,8 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const messages = await getMessages(id);
-
+  const chat = await getChat(id);
+  const messages = await getMessages(id, chat?.encodePassword);
   return (
     <div
       key={id}

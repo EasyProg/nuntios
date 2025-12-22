@@ -1,25 +1,33 @@
 import { ChatsLocalized } from "@/components/types";
-import { Chat } from "@prisma/client";
+import { Chat, User } from "@prisma/client";
+import CryptoJS from "crypto-js";
 
 const validatePassword = (password: string) => {
   const regex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
   return regex.test(password);
 };
-const formatDateToTime = (createdAt?: Date) =>
-  createdAt?.toLocaleTimeString([], {
+
+const formatDateToTime = (createdAt?: Date) => {
+  const createdAtInput =
+    typeof createdAt === "string" ? new Date(createdAt) : createdAt;
+  return createdAtInput?.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   });
+};
 
-const modifyDate = (date: Date): string => {
+const modifyDate = (date: Date | string): string => {
   const now = Date.now();
   const timeSymbols = 9;
-  const isMoreOneDay = new Date(now).getDate() !== date.getDate();
+  const inputDate = typeof date === "string" ? new Date(date) : date;
+  const isMoreOneDay = new Date(now).getDate() !== inputDate.getDate();
   return isMoreOneDay
-    ? date.toString().substring(0, date.toString().indexOf("GMT") - timeSymbols)
-    : date.toLocaleTimeString([], {
+    ? inputDate
+        .toString()
+        .substring(0, inputDate.toString().indexOf("GMT") - timeSymbols)
+    : inputDate.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
@@ -52,10 +60,69 @@ const isDate = (value: unknown): value is Date => {
   );
 };
 
-import { User } from "@prisma/client";
-
 export const mapUsersOption = (users: User[]) =>
   users.map((user) => ({ value: user.id, label: user.name }));
+
+/**
+ * Encrypt message using AES
+ * @param {string} message - Message to encrypt
+ * @param {string} password - Password/key for encryption
+ * @returns {string} Encrypted string in Base64 format
+ */
+const encryptMessage = (message: string, password: string) => {
+  try {
+    // const password = window.localStorage.get("encryption_password");
+    return CryptoJS.AES.encrypt(message, password).toString();
+  } catch (error) {
+    console.error("Encryption error:", error);
+    throw new Error("Failed to encrypt message");
+  }
+};
+
+/**
+ * Decrypt message using AES
+ * @param {string} encryptedMessage - Encrypted message in Base64 format
+ * @param {string} password - Password/key for decryption
+ * @returns {string} Decrypted message
+ */
+const decryptMessage = (encryptedMessage: string, password: string) => {
+  try {
+    // const password = window.localStorage.get("encryption_password");
+    const bytes = CryptoJS.AES.decrypt(encryptedMessage, password);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    if (!decrypted) {
+      throw new Error("Invalid password or corrupted data");
+    }
+
+    return decrypted;
+  } catch (error) {
+    console.error("Decryption error:", error);
+    throw new Error("Failed to decrypt message");
+  }
+};
+
+/**
+ * Generate random password
+ * @param {number} length - Password length (default: 32)
+ * @returns {string} Random password
+ */
+const getPasswordKey = (length = 32) => {
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=";
+  let password = "";
+
+  // Use Web Crypto API for cryptographically secure generation
+  const randomValues = new Uint32Array(length);
+  crypto.getRandomValues(randomValues);
+
+  for (let i = 0; i < length; i++) {
+    password += charset[randomValues[i] % charset.length];
+  }
+
+  localStorage.setItem("encryption_password", password);
+
+  return password;
+};
 
 export {
   validatePassword,
@@ -64,4 +131,7 @@ export {
   modifyDate,
   modifyChats,
   isDate,
+  encryptMessage,
+  decryptMessage,
+  getPasswordKey,
 };

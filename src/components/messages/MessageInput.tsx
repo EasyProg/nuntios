@@ -24,8 +24,6 @@ export const MessageInput: React.FC<
   value,
   onChange,
 }) => {
-  // const [message, setMessage] = useState<string>(value);
-
   const [message, setMessage] = useControllableState<string>({
     defaultValue: "",
     value,
@@ -40,7 +38,7 @@ export const MessageInput: React.FC<
           placeholder={placeholder}
           value={message}
           rows={2}
-          className="outline-none field-sizing-content max-w-[700]"
+          className="outline-none field-sizing-content max-w-[700] resize-none w-full"
           onChange={(e) => setMessage(e.target.value)}
           ref={ref}
           onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {

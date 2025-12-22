@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ContextMenu } from "radix-ui";
+import { useEffect } from "react";
 import { ChatUpdateDialog } from "../layout/createChat/ChatUpdateDialog";
 import { chatItem, chatItemActive } from "../ui/consts";
 import ConfirmationDialog from "../ui/dialog/ConfirmationDialog";
@@ -14,6 +15,7 @@ type ChatProps = {
   isActive: boolean;
   dbId: number;
   onDelete: (chatId: number) => void;
+  encodePassword: string | null;
 };
 
 export const ChatItem: React.FC<ChatProps> = ({
@@ -24,23 +26,44 @@ export const ChatItem: React.FC<ChatProps> = ({
   isActive,
   onDelete,
   dbId,
+  encodePassword,
 }) => {
+  useEffect(() => {
+    sessionStorage.setItem(
+      "chat_data",
+      JSON.stringify({ dbId, encodePassword }),
+    );
+  }, []);
+
+  const handleClick = () => {
+    sessionStorage.setItem(
+      "chat_data",
+      JSON.stringify({ dbId, encodePassword }),
+    );
+  };
+
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <div className={isActive ? chatItemActive : chatItem}>
-          <Link
-            className="!outline-none flex h-full flex-col justify-between min-h-14 max-w-[220px] overflow-hidden"
-            href={`/chat/${chatId}/`}
-            shallow={true}
-          >
-            <div className="mb-2">{name}</div>
-            <div className="mb-1">{lastMessage}</div>
+        <Link
+          className="contents! !outline-none flex h-full flex-col justify-between min-h-14 overflow-hidden"
+          passHref
+          href={`/chat/${chatId}/`}
+          onClick={handleClick}
+          shallow={true}
+        >
+          <div className={isActive ? chatItemActive : chatItem}>
+            <div className="mb-2 text-sm text-ellipsis max-w-[200px]">
+              {name}
+            </div>
+            <div className="mb-1 overflow-hidden max-h-[50px] max-w-[200px]">
+              {lastMessage}
+            </div>
             <div className="flex justify-end items-end text-[8px]">
               {lastMessage && lastMessageAt}
             </div>
-          </Link>
-        </div>
+          </div>
+        </Link>
       </ContextMenu.Trigger>
       <ContextMenu.Portal>
         <ContextMenu.Content className="rounded-md min-h-[50] min-w-[100] bg-cyan-700/40 cursor-pointer outline-none">

@@ -1,29 +1,25 @@
+import { encryptMessage } from "@/helpers/helpers";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../actions/prisma";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, chatId } = body;
+    const { message, dbId, encodePassword } = body;
     const { text, createdAt, sendUserId, replyMessage } = message;
-    const chat = await prisma.chat.findFirst({
-      cacheStrategy: {
-        ttl: 60,
-      },
-      where: { chatId },
-    });
+    const encrypted = encryptMessage(text, encodePassword);
     const res = await prisma.message.create({
       data: {
-        text,
+        text: encrypted,
         createdAt,
-        chatId: Number(chat?.id),
+        chatId: dbId,
         senderId: Number(sendUserId),
         replyId: replyMessage?.id,
       },
     });
     await prisma.chat.update({
       where: {
-        id: Number(chat?.id),
+        id: dbId,
       },
       data: {
         lastMessageAt: createdAt,

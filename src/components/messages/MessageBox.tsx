@@ -10,7 +10,9 @@ import { MessageCopyItemProps } from "../types";
 import { MessageItem } from "./MessageItem";
 
 type MessageListProps = {
-  messages: Partial<Message & { sendUser: User; replyMessage: Message }>[];
+  messages: Partial<
+    Message & { sendUser: User; replyMessage: Message; sendUserId?: string }
+  >[];
   chatId: string;
   handleDelete: () => void;
   handleReplyMessage: (message: MessageCopyItemProps) => void;
@@ -45,7 +47,9 @@ export const MessageBox: React.FC<MessageListProps> = ({
       className="grow bg-stone-800/30 overflow-y-auto max-h-[700] min-w-70 min-h-100 h-[-webkit-fill-available] h-[-moz-available]"
     >
       {messages.map((message, index) => {
-        const isAuthor = user?.email === message?.sendUser?.email;
+        const isAuthor =
+          Number(user?.id) === Number(message?.sendUserId) ||
+          Number(user?.id) === Number(message?.sendUser?.id);
         const messageId = message.id || message.createdAt;
         return (
           <MessageItem

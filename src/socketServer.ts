@@ -33,14 +33,15 @@ serverIo.on("connection", (socket: Socket) => {
   });
 
   socket.on("send-message", async (data) => {
-    const { chatId, message } = data;
+    const { chatId, message, dbId, encodePassword } = data;
     // Save data to BD than send to all in group
     // Send to everyone in group
 
     try {
       await axios.post(`${localHost}/api/message`, {
         message,
-        chatId,
+        dbId,
+        encodePassword,
       });
       // set item to storage get full fallback return
       (global as GlobalType).io?.to(chatId).emit("receive-message", message);

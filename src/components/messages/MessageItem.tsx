@@ -29,11 +29,13 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 }) => {
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger className="ContextMenuTrigger">
+      <ContextMenu.Trigger
+        className={`w-fit ${isAuthor ? "self-end" : "self-start"}`}
+      >
         <Flex
           className={`${
             isAuthor ? "bg-cyan-200/40" : "bg-cyan-500/40"
-          } rounded-md m-3 ${isAuthor ? "self-end" : "self-start"}`}
+          } rounded-md m-3`}
           justify="between"
         >
           <Flex direction="column" className="p-3">

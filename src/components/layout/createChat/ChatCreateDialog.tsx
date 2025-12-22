@@ -3,6 +3,7 @@
 import { useUsers } from "@/app/context/UsersContext";
 import { useMapUsers } from "@/components/hooks/useMapUsers";
 import { formButton, formInput } from "@/components/ui/consts";
+import { getPasswordKey } from "@/helpers/helpers";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 import axios from "axios";
@@ -40,8 +41,8 @@ export const ChatCreateDialog: React.FC = () => {
         name: nameValue,
         users: usersValue.map((item) => ({ id: item.value })),
         chatId,
+        encodePassword: getPasswordKey(),
       })
-      .then(() => {})
       .catch((error) => {
         toast.error(`${error.status}-${error.message}`, {
           position: "top-right",

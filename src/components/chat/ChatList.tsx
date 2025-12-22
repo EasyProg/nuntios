@@ -26,17 +26,15 @@ export const ChatList: React.FC<ChatList> = ({ chats }) => {
     router.refresh();
   };
   return (
-    <div className="d-flex">
+    <div className="d-flex max-h-[680px] min-w-[240px] overflow-auto">
       {chats.map((item) => (
         <ChatItem
-          dbId={item.id}
-          chatId={item.chatId}
-          key={item.chatId}
-          name={item.name}
-          lastMessage={item.lastMessage}
+          {...item}
           lastMessageAt={item.lastMessageAtLocalized}
           isActive={id === item.chatId}
           onDelete={onDelete}
+          key={item.chatId}
+          dbId={item.id}
         />
       ))}
     </div>

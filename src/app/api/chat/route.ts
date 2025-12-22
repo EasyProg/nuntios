@@ -9,8 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const userData: UserDataType = await getCurrentUser();
     const body = await request.json();
-    const { name, users, chatId } = body;
-
+    const { name, users, chatId, encodePassword } = body;
     if (!users || !name) {
       return new NextResponse("Missing info", { status: 400 });
     }
@@ -19,11 +18,13 @@ export async function POST(request: NextRequest) {
         email: userData?.email,
       },
     });
+    console.log({ currentUser });
     if (currentUser) {
       const chat = await prisma.chat.create({
         data: {
           name,
           chatId,
+          encodePassword,
           users: {
             connect: [...users, { id: currentUser.id }],
           },

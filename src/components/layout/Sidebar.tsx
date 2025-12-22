@@ -1,6 +1,7 @@
 "use client";
 
-import { isDate, modifyChats, modifyDate } from "@/helpers/helpers";
+import { useAuth } from "@/app/context/AuthContext";
+import { modifyChats, modifyDate } from "@/helpers/helpers";
 import { Chat } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { ChatList } from "../chat/ChatList";
@@ -15,6 +16,7 @@ type Sidebar = {
 export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput }) => {
   const [chats, setChats] = useState<ChatsLocalized>([]);
   const socket = useSocket();
+  const user = useAuth();
 
   useEffect(() => {
     const chatsWithStringDate = modifyChats(chatsInput);
@@ -27,17 +29,14 @@ export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput }) => {
     socket.on(
       "update-chat-message",
       ({ message = { text: "", createdAt: "" }, chatId }) => {
-        const localDate = isDate(message.createdAt)
-          ? message.createdAt
-          : new Date(message.createdAt);
-        const newChats = [...chats]
+        const newChats = modifyChats([...chatsInput])
           .map((chat) => {
             if (chat.chatId === chatId) {
               return {
                 ...chat,
                 lastMessage: message.text,
                 lastMessageAt: message.createdAt,
-                lastMessageAtLocalized: modifyDate(localDate),
+                lastMessageAtLocalized: modifyDate(message.createdAt),
               };
             } else return chat;
           })
@@ -54,7 +53,7 @@ export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput }) => {
       socket;
       socket.off("update-chat-message");
     };
-  }, [socket]);
+  }, [socket, chatsInput]);
 
   return (
     <div className="w-3xs p-3 h-screen text-xs">
