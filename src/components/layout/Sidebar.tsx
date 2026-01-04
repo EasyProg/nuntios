@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/app/context/AuthContext";
 import { modifyChats, modifyDate } from "@/helpers/helpers";
 import { Chat } from "@prisma/client";
 import { useEffect, useState } from "react";
@@ -16,7 +15,6 @@ type Sidebar = {
 export const Sidebar: React.FC<Sidebar> = ({ chats: chatsInput }) => {
   const [chats, setChats] = useState<ChatsLocalized>([]);
   const socket = useSocket();
-  const user = useAuth();
 
   useEffect(() => {
     const chatsWithStringDate = modifyChats(chatsInput);

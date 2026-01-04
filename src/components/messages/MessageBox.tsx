@@ -11,7 +11,12 @@ import { MessageItem } from "./MessageItem";
 
 type MessageListProps = {
   messages: Partial<
-    Message & { sendUser: User; replyMessage: Message; sendUserId?: string }
+    Message & {
+      sendUser: User;
+      replyMessage: Message;
+      sendUserId?: string;
+      senderName?: string;
+    }
   >[];
   chatId: string;
   handleDelete: () => void;
@@ -47,9 +52,10 @@ export const MessageBox: React.FC<MessageListProps> = ({
       className="grow bg-stone-800/30 overflow-y-auto max-h-[700] min-w-70 min-h-100 h-[-webkit-fill-available] h-[-moz-available]"
     >
       {messages.map((message, index) => {
-        const isAuthor =
-          Number(user?.id) === Number(message?.sendUserId) ||
-          Number(user?.id) === Number(message?.sendUser?.id);
+        const sendUserId =
+          Number(message?.sendUserId) || Number(message?.sendUser?.id);
+        const senderName = message?.senderName || message.sendUser?.name;
+        const isAuthor = Number(user?.id) === sendUserId;
         const messageId = message.id || message.createdAt;
         return (
           <MessageItem
@@ -58,7 +64,7 @@ export const MessageBox: React.FC<MessageListProps> = ({
             onDelete={handleDelete}
             createdAt={message.createdAt}
             isAuthor={isAuthor}
-            senderName={message?.sendUser?.name}
+            senderName={senderName}
             key={`${messageId}${index}`}
             handleReplyMessage={handleReplyMessage}
             replyMessage={message.replyMessage}

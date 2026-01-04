@@ -9,7 +9,7 @@ type GlobalType = { io?: Server };
 const server = createServer();
 const serverIo = new Server(server, {
   cors: {
-    origin: localHost, // Next js url
+    origin: [localHost], // Next js url
     methods: ["GET", "POST"],
   },
 });
@@ -34,9 +34,12 @@ serverIo.on("connection", (socket: Socket) => {
 
   socket.on("send-message", async (data) => {
     const { chatId, message, dbId, encodePassword } = data;
-    // Save data to BD than send to all in group
-    // Send to everyone in group
-
+    // optimistic update
+    (global as GlobalType).io?.to(chatId).emit("receive-message", message);
+    (global as GlobalType).io?.emit("update-chat-message", {
+      message,
+      chatId,
+    });
     try {
       await axios.post(`${localHost}/api/message`, {
         message,
@@ -44,11 +47,6 @@ serverIo.on("connection", (socket: Socket) => {
         encodePassword,
       });
       // set item to storage get full fallback return
-      (global as GlobalType).io?.to(chatId).emit("receive-message", message);
-      (global as GlobalType).io?.emit("update-chat-message", {
-        message,
-        chatId,
-      });
     } catch (error: unknown) {
       console.error("API call failed:", error);
 

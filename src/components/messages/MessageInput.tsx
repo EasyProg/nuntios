@@ -5,6 +5,11 @@ import { IconButton } from "@radix-ui/themes";
 import { ReactNode, RefAttributes } from "react";
 import useControllableState from "../hooks/useControllableState";
 
+type MessageInput = {
+  value: string;
+  caretPos: 0;
+};
+
 type MessageInputProps = {
   placeholder?: string;
   chatId: string;
@@ -12,6 +17,7 @@ type MessageInputProps = {
   replyMessage?: ReactNode;
   value: string;
   onChange: (value: string) => void;
+  setCaret: (value: number) => void;
 };
 
 export const MessageInput: React.FC<
@@ -23,6 +29,7 @@ export const MessageInput: React.FC<
   replyMessage,
   value,
   onChange,
+  setCaret,
 }) => {
   const [message, setMessage] = useControllableState<string>({
     defaultValue: "",
@@ -31,8 +38,8 @@ export const MessageInput: React.FC<
   });
 
   return (
-    <div className="flex items-center">
-      <div className="w-auto min-w-70 h-auto border-indigo-500 !rounded-md !text-gray-500 !bg-gray-600/30 p-3 outline-none min-h-40 w-full">
+    <div className="flex items-start">
+      <div className="flex flex-col w-auto min-w-70 h-auto border-indigo-500 !rounded-md !text-gray-500 !bg-gray-600/30 p-3 outline-none min-h-40 w-full">
         {replyMessage}
         <textarea
           placeholder={placeholder}
@@ -50,9 +57,13 @@ export const MessageInput: React.FC<
               setMessage("");
             }
           }}
+          onMouseDown={(e: React.MouseEvent<HTMLTextAreaElement>) =>
+            setCaret((e.target as HTMLTextAreaElement).selectionStart)
+          }
         />
       </div>
       <IconButton
+        asChild
         className={`${
           message !== "" ? "block opacity-100" : "hidden opacity-0"
         }! transition-all! cursor-pointer! bg-cyan-600/50! hover:bg-cyan-400/50! rounded-sm! h-[100%]! transition-discrete!`}

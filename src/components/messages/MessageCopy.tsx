@@ -10,7 +10,9 @@ export const MessageCopy: React.FC<
 > = ({ text, senderName, createdAt, isInInput = true }) => {
   return text ? (
     <Flex
-      className={`${isInInput ? "bg-gray-800" : "bg-cyan-700"} rounded-xs p-1`}
+      className={`${
+        isInInput ? "bg-gray-800" : "bg-cyan-700"
+      } rounded-xs p-1 w-max`}
       justify="between"
     >
       <Flex>
