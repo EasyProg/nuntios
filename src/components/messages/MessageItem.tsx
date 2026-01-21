@@ -1,13 +1,19 @@
 "use client";
 
-import { formatDateToTime } from "@/helpers/helpers";
+import {
+  countCharactersInReactNode,
+  formatDateToTime,
+} from "@/helpers/helpers";
 import { Flex, Text } from "@radix-ui/themes";
 import { ContextMenu } from "radix-ui";
+import { useEffect } from "react";
 import { MessageCopyItemProps } from "../types";
+import { CollapsibleMessage } from "../ui/CollapsibleMessage";
+import { LinkifyText } from "../ui/LinkifyText";
 import { MessageCopy } from "./MessageCopy";
 
 type MessageItemProps = {
-  id?: number;
+  id: number;
   text?: string;
   createdAt?: Date;
   isAuthor: boolean;
@@ -15,6 +21,9 @@ type MessageItemProps = {
   onDelete: (messageId?: number, createdAt?: Date) => void;
   handleReplyMessage: (message: MessageCopyItemProps) => void;
   replyMessage?: MessageCopyItemProps;
+  isOpen?: boolean;
+  setIsOpenMessageId: (messageId: number | null) => void;
+  onContentUpdate: () => void;
 };
 
 export const MessageItem: React.FC<MessageItemProps> = ({
@@ -26,12 +35,17 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   onDelete,
   handleReplyMessage,
   replyMessage,
+  isOpen = false,
+  setIsOpenMessageId,
+  onContentUpdate,
 }) => {
+  useEffect(() => {
+    const timer = setTimeout(onContentUpdate, 100);
+    return () => clearTimeout(timer);
+  }, [text, isOpen, onContentUpdate]);
   return (
     <ContextMenu.Root>
-      <ContextMenu.Trigger
-        className={`w-fit ${isAuthor ? "self-end" : "self-start"}`}
-      >
+      <ContextMenu.Trigger className={`w-fit`}>
         <Flex
           className={`${
             isAuthor ? "bg-cyan-200/40" : "bg-cyan-500/40"
@@ -43,7 +57,16 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             <Text className="text-xs text-gray-400 font-bold">
               {isAuthor ? "" : senderName}
             </Text>
-            <Text>{text}</Text>
+            <Text>
+              <CollapsibleMessage
+                openVisibility={countCharactersInReactNode(text) > 700}
+                isOpen={isOpen}
+                setIsOpenMessageId={setIsOpenMessageId}
+                messageId={id}
+              >
+                <LinkifyText text={text} />
+              </CollapsibleMessage>
+            </Text>
           </Flex>
           <Text className="flex space-between text-xs self-end pr-2 pb-1 font-bold text-gray-400">
             {formatDateToTime(createdAt)}

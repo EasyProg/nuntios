@@ -56,7 +56,7 @@ export const ChatItem: React.FC<ChatProps> = ({
             <div className="mb-2 text-sm text-ellipsis max-w-[200px]">
               {name}
             </div>
-            <div className="mb-1 overflow-hidden max-h-[50px] max-w-[200px]">
+            <div className="mb-1 overflow-hidden max-h-[30px] max-w-[200px] text-ellipsis">
               {lastMessage}
             </div>
             <div className="flex justify-end items-end text-[8px]">

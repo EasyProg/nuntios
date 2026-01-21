@@ -136,7 +136,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
   }, [chatMessages, chatId]);
 
   return (
-    <div className="h-[90vh] flex flex-col justify-between">
+    <div className="h-[100vh] flex flex-col justify-between">
       {messageBox}
       <Popover.Root open={popoverOpen}>
         <Popover.Trigger
