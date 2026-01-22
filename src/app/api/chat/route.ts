@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
         email: userData?.email,
       },
     });
-    console.log({ currentUser });
     if (currentUser) {
       const chat = await prisma.chat.create({
         data: {

@@ -2,6 +2,31 @@ import { ChatsLocalized } from "@/components/types";
 import { Chat, User } from "@prisma/client";
 import CryptoJS from "crypto-js";
 
+import { ReactNode } from "react";
+
+export const countCharactersInReactNode = (node: ReactNode): number => {
+  const element = node as any;
+  if (!element.props) {
+    return element.length;
+  }
+  if (element.props.text !== undefined) {
+    return element.props.text.length;
+  }
+
+  return 0;
+};
+
+const splitPartsElement = (node: ReactNode) => {
+  const element = node as any;
+  let firstPart = element.props.text;
+  let secondPart = "";
+  if (element.props?.text !== undefined) {
+    firstPart = element.props?.text.substring(0, 700);
+    secondPart = element.props?.text.substring(700);
+  }
+  return { firstPart, secondPart };
+};
+
 const validatePassword = (password: string) => {
   const regex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
@@ -89,6 +114,8 @@ const decryptMessage = (encryptedMessage: string, password: string) => {
   try {
     // const password = window.localStorage.get("encryption_password");
     const bytes = CryptoJS.AES.decrypt(encryptedMessage, password);
+    // const words = CryptoJS.enc.Base64.parse(bytes as Base64);
+    // const text = CryptoJS.enc.Utf8.stringify(words);
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
     if (!decrypted) {
       throw new Error("Invalid password or corrupted data");
@@ -134,4 +161,5 @@ export {
   encryptMessage,
   decryptMessage,
   getPasswordKey,
+  splitPartsElement,
 };

@@ -11,7 +11,7 @@ export const getMessages = async (id: string, password?: string | null) => {
   try {
     const messages = await prisma.message.findMany({
       cacheStrategy: {
-        ttl: 60,
+        ttl: 15,
       },
       orderBy: {
         createdAt: "asc",
