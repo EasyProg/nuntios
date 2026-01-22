@@ -23,6 +23,20 @@
     --foreground: #ededed;
   }
 }
+@layer base {
+  ::-webkit-scrollbar {
+    width: 4px;
+    /* height: 10px; */
+    @apply bg-stone-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cyan-900;
+    @apply rounded-sm;
+  }
+  ::-webkit-scrollbar-corner {
+    @apply bg-neutral-200;
+  }
+}
 
 body {
   background: var(--background);
