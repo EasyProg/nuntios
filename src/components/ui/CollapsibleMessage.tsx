@@ -33,7 +33,6 @@ export const CollapsibleMessage: FC<PropsWithChildren<OpenProps>> = ({
           <ArrowDownIcon
             className="hover:stroke-cyan-700"
             onClick={() => {
-              console.log({ messageId });
               setIsOpenMessageId(messageId);
             }}
           />

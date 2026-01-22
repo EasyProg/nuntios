@@ -117,7 +117,6 @@ export const MessageBox: React.FC<MessageListProps> = ({
 
   const scrollToBottomButton = useMemo(() => {
     if (isAtBottom || messages.length <= 10) return null;
-    console.log({ isAtBottom });
     return (
       <IconButton
         radius="full"
