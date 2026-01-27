@@ -20,6 +20,7 @@ type MessageItemProps = {
   senderName?: string | null;
   onDelete: (messageId?: number, createdAt?: Date) => void;
   handleReplyMessage: (message: MessageCopyItemProps) => void;
+  handleResendMessage: (message: MessageCopyItemProps) => void;
   replyMessage?: MessageCopyItemProps;
   isOpen?: boolean;
   setIsOpenMessageId: (messageId: number | null) => void;
@@ -34,6 +35,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   isAuthor,
   onDelete,
   handleReplyMessage,
+  handleResendMessage,
   replyMessage,
   isOpen = false,
   setIsOpenMessageId,
@@ -88,6 +90,14 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             }
           >
             Reply
+          </ContextMenu.Item>
+          <ContextMenu.Item
+            className="bg-cyan-700/40 rounded-md text-red-100 p-2 outline-none hover:bg-cyan-300/40"
+            onClick={() =>
+              handleResendMessage({ id, text, senderName, createdAt })
+            }
+          >
+            Forward
           </ContextMenu.Item>
         </ContextMenu.Content>
       </ContextMenu.Portal>

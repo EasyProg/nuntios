@@ -27,12 +27,14 @@ type MessageListProps = {
   chatId: string;
   handleDelete: () => void;
   handleReplyMessage: (message: MessageCopyItemProps) => void;
+  handleResendMessage: (message: MessageCopyItemProps) => void;
 };
 
 export const MessageBox: React.FC<MessageListProps> = ({
   messages,
   handleDelete,
   handleReplyMessage,
+  handleResendMessage,
 }) => {
   const { user } = useAuth();
   const [isScrolling, setIsScrolling] = useState(false);
@@ -80,7 +82,7 @@ export const MessageBox: React.FC<MessageListProps> = ({
         >
           {({ registerChild, measure }) => (
             <div
-              ref={registerChild}
+              // ref={registerChild}
               style={style}
               className={`px-2 py-1 flex ${
                 isAuthor ? "justify-end" : "justify-start"
@@ -97,6 +99,7 @@ export const MessageBox: React.FC<MessageListProps> = ({
                 senderName={senderName}
                 key={`${message.id}${index}`}
                 handleReplyMessage={handleReplyMessage}
+                handleResendMessage={handleResendMessage}
                 replyMessage={message.replyMessage}
                 setIsOpenMessageId={setIsOpenedMessageId}
                 onContentUpdate={measure}

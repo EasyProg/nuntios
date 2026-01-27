@@ -4,10 +4,11 @@ import { formatDateToTime } from "@/helpers/helpers";
 import { Flex, Text } from "@radix-ui/themes";
 import Image from "next/image";
 import { MessageCopyItemProps } from "../types";
+import { LinkifyText } from "../ui/LinkifyText";
 
 export const MessageCopy: React.FC<
-  MessageCopyItemProps & { isInInput?: boolean }
-> = ({ text, senderName, createdAt, isInInput = true }) => {
+  MessageCopyItemProps & { isInInput?: boolean; onClearReply?: () => void }
+> = ({ text, senderName, createdAt, isInInput = true, onClearReply }) => {
   return text ? (
     <Flex
       className={`${
@@ -17,19 +18,26 @@ export const MessageCopy: React.FC<
       direction="column"
     >
       <Flex direction="column">
-        <Image
-          width={15}
-          height={15}
-          priority
-          src="/commaleft.svg"
-          alt="som text"
-          className="self-start"
-        />
+        <div className="flex w-[100%] justify-between">
+          <Image
+            width={15}
+            height={15}
+            priority
+            src="/commaleft.svg"
+            alt="som text"
+            className="self-start"
+          />
+          {isInInput ? (
+            <div className="cursor-pointer" onClick={onClearReply}>
+              x
+            </div>
+          ) : null}
+        </div>
         <Flex direction="column" className="pl-2">
           <Text className="text-xs text-gray-400 font-bold text-start">
             {senderName}
           </Text>
-          <Text className="wrap-anywhere text-start">{text}</Text>
+          <LinkifyText text={text} className="wrap-anywhere text-start" />
         </Flex>
       </Flex>
       <Flex justify="end">

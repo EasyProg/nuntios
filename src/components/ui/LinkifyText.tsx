@@ -1,6 +1,10 @@
+import { Text } from "@radix-ui/themes";
 import { FC } from "react";
 
-export const LinkifyText: FC<{ text?: string }> = ({ text }) => {
+export const LinkifyText: FC<{ text?: string; className?: string }> = ({
+  text,
+  className,
+}) => {
   const urlRegex =
     /(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
 
@@ -41,5 +45,5 @@ export const LinkifyText: FC<{ text?: string }> = ({ text }) => {
     }
   };
 
-  return <>{linkify(text)}</>;
+  return <Text className={className}>{linkify(text)}</Text>;
 };

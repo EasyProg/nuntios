@@ -1,11 +1,13 @@
 "use client";
 
 import { useAuth } from "@/app/context/AuthContext";
+import { useChats } from "@/app/context/ChatsContext";
 import { Message } from "@prisma/client";
 import axios from "axios";
 import { Popover } from "radix-ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSocket from "../hooks/useSocket";
+import { SearchChatsDialog } from "../layout/createChat/SearchChatsDialog";
 import { MessageCopyItemProps } from "../types";
 import { additionalEmojies, emojis } from "../ui/consts";
 import { MessageBox } from "./MessageBox";
@@ -28,8 +30,10 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
   const [caret, setCaret] = useState(0);
   const [isFullState, setIsFullState] = useState<boolean>(false);
   const [popoverOpen, setIsPopoverOpen] = useState(false);
+  const [isUsersDialogOpen, setIsUsersDialogOpen] = useState(false);
+  const { updateMessage, redirectedMessage } = useChats();
   const [replyMessage, setReplyMessage] = useState<MessageCopyItemProps | null>(
-    null,
+    redirectedMessage,
   );
 
   const emojies = useMemo(
@@ -124,6 +128,11 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
     }
   };
 
+  const handleResendMessage = (message: Partial<Message>) => {
+    updateMessage(message);
+    setIsUsersDialogOpen(true);
+  };
+
   const messageBox = useMemo(() => {
     return (
       <MessageBox
@@ -131,6 +140,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
         chatId={chatId}
         handleDelete={handleDelete}
         handleReplyMessage={handleReplyMessage}
+        handleResendMessage={handleResendMessage}
       />
     );
   }, [chatMessages, chatId]);
@@ -150,7 +160,12 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
             value={textInputValue}
             onChange={setTextInputValue}
             handleSendMessage={handleSendMessage}
-            replyMessage={<MessageCopy {...replyMessage} />}
+            replyMessage={
+              <MessageCopy
+                onClearReply={() => setReplyMessage(null)}
+                {...replyMessage}
+              />
+            }
           />
         </Popover.Trigger>
         <Popover.Content
@@ -169,7 +184,7 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
           {emojies.map((item, index) => (
             <div
               key={index}
-              className="pl-2"
+              className="pl-2 cursor-pointer"
               onClick={() => {
                 const firstPart = textInputValue.substring(0, caret);
                 const secondPart = textInputValue.substring(caret);
@@ -180,13 +195,17 @@ export const ChatRoom: React.FC<ChatProps> = ({ messages, chatId }) => {
             </div>
           ))}
           <p
-            className="w-[100%] text-center"
+            className="w-[100%] text-center cursor-pointer"
             onClick={() => setIsFullState((prev) => !prev)}
           >
             {!isFullState ? "Load more ... " : "Load less"}
           </p>
         </Popover.Content>
       </Popover.Root>
+      <SearchChatsDialog
+        open={isUsersDialogOpen}
+        onOpenChange={setIsUsersDialogOpen}
+      />
     </div>
   );
 };

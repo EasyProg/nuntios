@@ -1,5 +1,6 @@
 import { getUsers } from "@/app/actions";
 import getChats from "@/app/actions/getChats";
+import { ChatsProvider } from "@/app/context/ChatsContext";
 import { UsersProvider } from "@/app/context/UsersContext";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Spinner } from "@radix-ui/themes";
@@ -15,10 +16,12 @@ export default async function ChatsLayout({
   return (
     <Suspense fallback={<Spinner />}>
       <UsersProvider initialUsers={users}>
-        <div className="flex items-start">
-          <Sidebar chats={chats ?? []} />
-          {children}
-        </div>
+        <ChatsProvider initialChats={chats ?? []}>
+          <div className="flex items-start">
+            <Sidebar chats={chats ?? []} />
+            {children}
+          </div>
+        </ChatsProvider>
       </UsersProvider>
     </Suspense>
   );

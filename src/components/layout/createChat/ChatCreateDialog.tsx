@@ -99,7 +99,9 @@ export const ChatCreateDialog: React.FC = () => {
               isMulti={true}
               onChange={setUsersValue}
               classNames={{
-                control: () => "!bg-zinc-900 min-w-85",
+                control: () =>
+                  `!bg-zinc-900 !border-transparent min-w-85 h-[30px] ${formInput}`,
+                indicatorSeparator: () => "!invisible",
                 menu: () => "!bg-zinc-900",
                 option: ({ isFocused }) =>
                   isFocused ? "!bg-zinc-800" : "!bg-zinc-900",
